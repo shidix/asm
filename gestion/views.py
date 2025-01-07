@@ -70,7 +70,7 @@ def assistances_form_save(request):
     EMPLOYEES
 '''
 def get_employees(request):
-    search_value = get_session(request, "s-emp-name")
+    search_value = get_session(request, "s_emp_name")
     filters_to_search = ["name__icontains",]
     full_query = Q()
     if search_value != "":
