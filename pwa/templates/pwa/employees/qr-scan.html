@@ -1,0 +1,24 @@
+{% extends "pwa-base.html" %}
+{% load static %}
+
+{% block content%}
+    <script src="{% static "js/html5-qrcode.min.js" %}"></script>
+    <div id="reader" class="reader"></div>
+    <form method="post" action="{% url "pwa-qr-read" %}" id="frmQrScan">
+        {% csrf_token %}
+        <input type="hidden" id="qr_value" name="qr_value" />
+    </form>
+
+    <script>
+        var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Scan result: ${decodedText}`, decodedResult);
+            html5QrcodeScanner.clear();
+            $("#qr_value").val(decodedText);
+            $("#frmQrScan").submit();
+        }
+
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+{% endblock %}
