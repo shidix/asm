@@ -24,18 +24,18 @@
         //html5Qrcode.start({ facingMode: { exact: "environment"} }, {fps: 10, qrbox: 250}, onScanSuccess);
         {%endcomment%}
 
+        const html5QrCode = new Html5Qrcode(/* element id */ "reader");
         function onScanSuccess(decodedText, decodedResult) {
-            console.log(`Scan result: ${decodedText}`, decodedResult);
-            html5QrcodeScanner.clear();
+            //console.log(`Scan result: ${decodedText}`, decodedResult);
+            {#//html5QrcodeScanner.clear();#}
+            html5QrCode.stop();
             $("#qr_value").val(decodedText);
             $("#frmQrScan").submit();
         }
-
         Html5Qrcode.getCameras().then(devices => {
             if (devices && devices.length) {
                 //console.log(devices);
                 var cameraId = devices[devices.length-1].id;
-                const html5QrCode = new Html5Qrcode(/* element id */ "reader");
                 html5QrCode.start(cameraId, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess);
             }
         }).catch(err => { console.log(err); });
