@@ -10,7 +10,15 @@
     </form>
 
     <script>
-        var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        /*var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { 
+                fps: 10, 
+                qrbox: 250, 
+                videoConstraints: { facingMode: { exact: "environment" }, }, 
+            }
+        );*/
+        //html5QrcodeScanner.render(onScanSuccess);
 
         function onScanSuccess(decodedText, decodedResult) {
             console.log(`Scan result: ${decodedText}`, decodedResult);
@@ -19,6 +27,13 @@
             $("#frmQrScan").submit();
         }
 
-        html5QrcodeScanner.render(onScanSuccess);
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                //console.log(devices);
+                var cameraId = devices[devices.length-1].id;
+                const html5QrCode = new Html5Qrcode(/* element id */ "reader");
+                html5QrCode.start(cameraId, { fps: 10, qrbox: { width: 250, height: 250 } }, onScanSuccess);
+            }
+        }).catch(err => { console.log(err); });
     </script>
 {% endblock %}
