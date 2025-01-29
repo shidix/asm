@@ -71,6 +71,8 @@ def employee_qr_read(request):
         #else:
         #    assistance.finish = True
         #    assistance.save()
+        if client.observations != "":
+            return render(request, "pwa/employees/client-obs.html", {"client": client})
         return redirect("pwa-home")
         #return render(request, "pwa/employees/qr-read.html", {"value": qr_val})
     except Exception as e:

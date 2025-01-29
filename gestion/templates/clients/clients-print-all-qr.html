@@ -12,8 +12,10 @@
     <body>
          <div class="row qr-print">
             <div class="col-12"> Asistencia Canaria <div> 
-            <div class="col-12"> {% if obj.qr %}<img src="{{obj.qr.url}}" alt="qr"/>{% endif %} </div> 
-            <div class="col-12"> {{obj.name}} </div> 
+            {% for obj in item_list %}
+                <div class="col-12"> {% if obj.qr %}<img src="{{obj.qr.url}}" alt="qr"/>{% endif %} </div> 
+                <div class="col-12"> {{obj.name}} </div> 
+            {% endfor %}
          </div>
          <script> window.print(); </script>
     </body>

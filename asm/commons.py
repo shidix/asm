@@ -149,10 +149,10 @@ def csv_export(header, values, file_name="csv_file"):
         )
 
         writer = csv.writer(response)
-        header = []
+        header_csv = []
         for val in header:
-            header.append(val)
-        writer.writerow(header)
+            header_csv.append(val)
+        writer.writerow(header_csv)
         for row in values:
             data_row = []
             for val in row:

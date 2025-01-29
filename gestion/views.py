@@ -156,7 +156,7 @@ def employees_import(request):
     CLIENTS
 '''
 def get_clients(request):
-    search_value = get_session(request, "s-client-name")
+    search_value = get_session(request, "s_cli_name")
     filters_to_search = ["name__icontains",]
     full_query = Q()
     if search_value != "":
@@ -174,8 +174,7 @@ def clients_list(request):
 
 @group_required("Administradores",)
 def clients_search(request):
-    search_value = get_param(request.GET, "s-name")
-    set_session(request, "s-comp-name", search_value)
+    set_session(request, "s_cli_name", get_param(request.GET, "s_cli_name"))
     return render(request, "clients/clients-list.html", {"items": get_clients(request)})
 
 @group_required("Administradores",)
@@ -199,6 +198,10 @@ def clients_remove(request):
         obj.qr.delete(save=True)
         obj.delete()
     return render(request, "clients/clients-list.html", {"items": get_clients(request)})
+
+@group_required("Administradores",)
+def clients_print_all_qr(request):
+    return render(request, "clients/clients-print-all-qr.html", {"item_list": Client.objects.filter(inactive=False)})
 
 @group_required("Administradores",)
 def clients_print_qr(request, obj_id):

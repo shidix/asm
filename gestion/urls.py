@@ -24,6 +24,7 @@ urlpatterns = [
     path('clients/search', views.clients_search, name='clients-search'),
     path('clients/form', views.clients_form, name='clients-form'),
     path('clients/remove', views.clients_remove, name='clients-remove'),
+    path('clients/print-all-qr', views.clients_print_all_qr, name='clients-print-all-qr'),
     path('clients/print-qr/<int:obj_id>', views.clients_print_qr, name='clients-print-qr'),
     path('clients/assistances/<int:obj_id>', views.clients_assistances, name='clients-assistances'),
 

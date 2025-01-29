@@ -18,8 +18,13 @@
                 </div>
                 <br/>
                 <div class="row">
-                    <div class="col-9"><strong><i class='fas fa-map-marker orange'></i> 
+                    <div class="col-12"><strong><i class='fas fa-map-marker orange'></i> 
                         {% trans "Dirección" %}<br /></strong> {{ item.address|default:"" }}</div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-9"><strong><i class='fas fa-comments orange'></i> 
+                        {% trans "Observaciones" %}<br /></strong> {{ item.observations|default:"" }}</div>
                     <div class="col-3 text-right"> 
                         <a class="btn btn-xs" href="{% url "clients-print-qr" item.id %}" title="{% trans 'Imprimir' %}" 
                             target="_blank"> <i class="fas fa-print"></i></a> 

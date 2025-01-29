@@ -71,6 +71,7 @@ class Client(models.Model):
     phone = models.CharField(max_length=12, verbose_name = _('Teléfono de contacto'), null=True, default='0000000000')
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     address = models.TextField(verbose_name = _('Dirección'), null=True, default='')
+    observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='')
     qr = models.ImageField(upload_to=upload_form_qr, blank=True, verbose_name="QR", help_text="Select file to upload")
 
     def __str__(self):
