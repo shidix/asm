@@ -76,17 +76,21 @@ def employee_qr_read(request):
         return redirect("pwa-home")
         #return render(request, "pwa/employees/qr-read.html", {"value": qr_val})
     except Exception as e:
-        return HttpResponse("Error: QR no válido ({})".format(e))
+        return render(request, "pwa/employees/qr-error.html", {})
+        #return HttpResponse("Error: QR no válido ({})".format(e))
 
 @group_required_pwa("employees")
 #def employee_qr_finish(request, obj_id):
 def employee_qr_finish(request):
-    qr_val = request.POST["qr_value"].split("/")
-    client = get_or_none(Client, qr_val[6])
-    obj = Assistance.objects.filter(client=client, employee=request.user.employee).order_by("-ini_date").first()
-    #obj = get_or_none(Assistance, obj_id)
-    obj.end_date = datetime.now() 
-    obj.finish = True
-    obj.save()
-    return redirect("pwa-home")
- 
+    try:
+        qr_val = request.POST["qr_value"].split("/")
+        client = get_or_none(Client, qr_val[6])
+        obj = Assistance.objects.filter(client=client, employee=request.user.employee).order_by("-ini_date").first()
+        #obj = get_or_none(Assistance, obj_id)
+        obj.end_date = datetime.now() 
+        obj.finish = True
+        obj.save()
+        return redirect("pwa-home")
+    except Exception as e:
+        return render(request, "pwa/employees/qr-error.html", {})
+     

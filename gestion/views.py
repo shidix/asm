@@ -7,10 +7,10 @@ from datetime import datetime
 import os, csv
 
 from asm.decorators import group_required
-from asm.commons import get_float, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export
+from asm.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export
 from .models import Employee, Client, Assistance
 
-ACCESS_PATH="https://asm.shidix.es/gestion/assistances/client/"
+ACCESS_PATH="{}/gestion/assistances/client/".format(settings.MAIN_URL)
 
 
 def init_session_date(request, key):
@@ -65,6 +65,16 @@ def assistances_form_save(request):
     obj.finish = True if finish != "" else False
     obj.save()
     return render(request, "assistances-list.html", {"item_list": get_assistances(request)})
+
+@group_required("Administradores",)
+def assistances_remove(request):
+    obj = get_or_none(Assistance, request.GET["obj_id"]) if "obj_id" in request.GET else None
+    if obj != None:
+        obj.delete()
+    return render(request, "assistances-list.html", {"item_list": get_assistances(request)})
+
+def assistances_client(request, client_id):
+    return render(request, "assistances-client-error.html", {})
 
 '''
     EMPLOYEES
@@ -210,4 +220,62 @@ def clients_print_qr(request, obj_id):
 @group_required("Administradores",)
 def clients_assistances(request, obj_id):
     return render(request, "clients/clients-assistances.html", {"obj": get_or_none(Client, obj_id)})
+
+'''
+    REPORT
+'''
+def get_total_duration(item_list):
+    total = 0
+    for item in item_list:
+        total += get_int(item.duration)
+    return total
+
+def get_report(request):
+    cli = get_session(request, "s_rep_cli")
+    emp = get_session(request, "s_rep_emp")
+    i_date = datetime.strptime("{} 00:00".format(get_session(request, "s_rep_idate")), "%Y-%m-%d %H:%M")
+    e_date = datetime.strptime("{} 23:59".format(get_session(request, "s_rep_edate")), "%Y-%m-%d %H:%M")
+
+    kwargs = {"ini_date__range": (i_date, e_date)}
+    if cli != "":
+        kwargs["client__name__icontains"] = cli
+    if emp != "":
+        kwargs["employee__name__icontains"] = emp
+
+    return Assistance.objects.filter(**kwargs)
+
+@group_required("Administradores",)
+def report(request):
+    init_session_date(request, "s_rep_idate")
+    init_session_date(request, "s_rep_edate")
+    return render(request, "report/report.html", {"items": []})
+    #return render(request, "report/report.html", {"items": get_report(request)})
+
+@group_required("Administradores",)
+def report_list(request):
+    item_list = get_report(request)
+    return render(request, "report/report-list.html", {"items": item_list, "duration": get_total_duration(item_list)})
+
+@group_required("Administradores",)
+def report_search(request):
+    set_session(request, "s_rep_emp", get_param(request.GET, "s_rep_emp"))
+    set_session(request, "s_rep_cli", get_param(request.GET, "s_rep_cli"))
+    set_session(request, "s_rep_idate", get_param(request.GET, "s_rep_idate"))
+    set_session(request, "s_rep_edate", get_param(request.GET, "s_rep_edate"))
+    item_list = get_report(request)
+    return render(request, "report/report-list.html", {"items": item_list, "duration": get_total_duration(item_list)})
+
+@group_required("Administradores",)
+def report_export(request):
+    header = ['Cliente', 'Empleado', 'Fecha de inicio', 'Fecha de fin', 'Duración del servicio', 'Finalizada']
+    values = []
+    items = get_report(request)
+    for item in items:
+        idate = item.ini_date.strftime("%d-%m-%Y %H:%M")
+        edate = item.end_date.strftime("%d-%m-%Y %H:%M")
+        finish = "Si" if item.finish else "No"
+        row = [item.client.name, item.employee.name, idate, edate, item.duration, finish]
+        values.append(row)
+    return csv_export(header, values, "empleados")
+
 

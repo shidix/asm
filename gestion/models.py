@@ -91,6 +91,18 @@ class Assistance(models.Model):
     client = models.ForeignKey(Client, verbose_name=_('Client'), on_delete=models.SET_NULL, null=True, related_name="assistances")
     employee = models.ForeignKey(Employee,verbose_name=_('Empleado'),on_delete=models.SET_NULL,null=True,related_name="assistances")
 
+    @property
+    def duration(self):
+        diff = self.end_date - self.ini_date
+        days, seconds = diff.days, diff.seconds
+        return (seconds % 60)
+        #hours += seconds // 3600
+        #minutes += (seconds % 3600) // 60
+        #if minutes > 59:
+        #    hours += minutes // 60
+        #    minutes = minutes % 60
+        #return hours, minutes
+ 
     class Meta:
         verbose_name = _('Asistencia')
         verbose_name_plural = _('Asistencias')

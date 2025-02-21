@@ -30,7 +30,8 @@
                 <a class="btn btn-xs ark" data-url="{%url "employees-form"%}" data-target-modal="common-modal" 
                     data-obj_id="{{item.id}}" title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
                 <a class="btn btn-xs ark" data-url="{% url "employees-remove" %}" data-target="emp-list" data-obj_id="{{item.id}}" 
-                    title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}"><i class="fas fa-trash"></i></a> 
+                    title="{% trans 'Borrar' %}" data-confirm="{% trans "Are you sure to remove this element?" %}">
+                    <i class="fas fa-trash"></i></a> 
             </div>
         </div>
     {% endfor %}
