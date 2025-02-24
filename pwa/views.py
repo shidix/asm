@@ -85,7 +85,7 @@ def employee_qr_finish(request):
     try:
         qr_val = request.POST["qr_value"].split("/")
         client = get_or_none(Client, qr_val[6])
-        obj = Assistance.objects.filter(client=client, employee=request.user.employee).order_by("-ini_date").first()
+        obj = Assistance.objects.filter(client=client, employee=request.user.employee, finish=False).order_by("-ini_date").first()
         #obj = get_or_none(Assistance, obj_id)
         obj.end_date = datetime.now() 
         obj.finish = True

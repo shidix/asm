@@ -95,7 +95,7 @@ class Assistance(models.Model):
     def duration(self):
         diff = self.end_date - self.ini_date
         days, seconds = diff.days, diff.seconds
-        return (seconds % 60)
+        return (seconds / 60) + (seconds % 60)
         #hours += seconds // 3600
         #minutes += (seconds % 3600) // 60
         #if minutes > 59:
