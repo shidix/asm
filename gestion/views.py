@@ -48,11 +48,16 @@ def assistances_search(request):
 @group_required("Administradores",)
 def assistances_form(request):
     obj = get_or_none(Assistance, get_param(request.GET, "obj_id"))
-    return render(request, "assistances-form.html", {'obj': obj})
+    context = {'obj': obj, 'client_list': Client.objects.all(), 'emp_list': Employee.objects.all()}
+    return render(request, "assistances-form.html", context)
 
 @group_required("Administradores",)
 def assistances_form_save(request):
     obj = get_or_none(Assistance, get_param(request.GET, "obj_id"))
+    if obj == None:
+        obj = Assistance.objects.create()
+    obj.client = get_or_none(Client, get_param(request.GET, "client"))
+    obj.employee = get_or_none(Employee, get_param(request.GET, "employee"))
     ini_date = get_param(request.GET, "ini_date")
     end_date = get_param(request.GET, "end_date")
     ini_time = get_param(request.GET, "ini_time")
