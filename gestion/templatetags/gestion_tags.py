@@ -46,3 +46,13 @@ def get_worked_time(emp, ini_date, end_date):
     hours, minutes = emp.worked_time(ini_date, end_date)
     return "{} horas y {} minutos".format(hours, minutes)
 
+@register.filter
+def local_time(mydate):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    utc_now = mydate.replace(tzinfo=ZoneInfo("UTC"))
+    canary_time = utc_now.astimezone(ZoneInfo("Atlantic/Canary"))
+    canary_time = canary_time.replace(tzinfo=ZoneInfo("UTC"))
+
+    return canary_time

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 from asm.decorators import group_required_pwa
-from asm.commons import user_in_group, get_or_none
+from asm.commons import user_in_group, get_or_none, get_param
 from gestion.models import Employee, Client, Assistance
 
 
@@ -94,3 +94,41 @@ def employee_qr_finish(request):
     except Exception as e:
         return render(request, "pwa/employees/qr-error.html", {})
      
+@group_required_pwa("employees")
+def employee_code_read(request):
+    try:
+        code = get_param(request.POST, "code")
+        if code == "":
+            return render(request, "pwa/employees/qr-error.html", {})
+
+        client = get_or_none(Client, code, "code")
+        if client == None:
+            return render(request, "pwa/employees/qr-error.html", {})
+
+        obj = Assistance.objects.create(client=client, employee=request.user.employee, ini_date=datetime.now())
+        if client.observations != "":
+            return render(request, "pwa/employees/client-obs.html", {"client": client})
+        return redirect("pwa-home")
+    except Exception as e:
+        print(e)
+        return render(request, "pwa/employees/qr-error.html", {})
+
+@group_required_pwa("employees")
+def employee_code_finish(request):
+    try:
+        code = get_param(request.POST, "code")
+        if code == "":
+            return render(request, "pwa/employees/qr-error.html", {})
+
+        client = get_or_none(Client, code, "code")
+        if client == None:
+            return render(request, "pwa/employees/qr-error.html", {})
+
+        obj = Assistance.objects.filter(client=client, employee=request.user.employee, finish=False).order_by("-ini_date").first()
+        obj.end_date = datetime.now() 
+        obj.finish = True
+        obj.save()
+        return redirect("pwa-home")
+    except Exception as e:
+        return render(request, "pwa/employees/qr-error.html", {})
+ 

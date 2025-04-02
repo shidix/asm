@@ -12,3 +12,14 @@ def verified(date_str):
     except Exception as e:
         print (show_exc(e))
         return False
+
+@register.filter
+def local_time(mydate):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    utc_now = mydate.replace(tzinfo=ZoneInfo("UTC"))
+    canary_time = utc_now.astimezone(ZoneInfo("Atlantic/Canary"))
+    canary_time = canary_time.replace(tzinfo=ZoneInfo("UTC"))
+
+    return canary_time

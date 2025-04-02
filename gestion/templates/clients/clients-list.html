@@ -11,10 +11,12 @@
                 <div class="row">
                     <div class="col-4"><strong><i class='fas fa-user orange'></i> 
                         {% trans "Nombre" %}<br /></strong> {{ item.name|default:"---" }}</div>
-                    <div class="col-4"><strong><i class='fas fa-phone orange'></i> 
-                        {% trans "Teléfono" %}<br /></strong> {{ item.phone|default:"" }}</div>
                     <div class="col-4"><strong><i class='fas fa-envelope orange'></i> 
                         {% trans "Correo electrónico" %}<br /></strong> {{ item.email|default:"" }}</div>
+                    <div class="col-2"><strong><i class='fas fa-phone orange'></i> 
+                        {% trans "Teléfono" %}<br /></strong> {{ item.phone|default:"" }}</div>
+                    <div class="col-2"><strong><i class='fas fa-code orange'></i> 
+                        {% trans "Código" %}<br /></strong> {{ item.code|default:"" }}</div>
                 </div>
                 <br/>
                 <div class="row">

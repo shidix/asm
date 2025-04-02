@@ -53,6 +53,8 @@ def assistances_form(request):
 
 @group_required("Administradores",)
 def assistances_form_save(request):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
     obj = get_or_none(Assistance, get_param(request.GET, "obj_id"))
     if obj == None:
         obj = Assistance.objects.create()
@@ -65,6 +67,11 @@ def assistances_form_save(request):
     finish = get_param(request.GET, "finish")
     idate = datetime.strptime("{} {}".format(ini_date, ini_time), "%Y-%m-%d %H:%M")
     edate = datetime.strptime("{} {}".format(end_date, end_time), "%Y-%m-%d %H:%M")
+    idate = idate.replace(tzinfo=ZoneInfo("Atlantic/Canary"))
+    edate = edate.replace(tzinfo=ZoneInfo("Atlantic/Canary"))
+    idate = idate.astimezone(ZoneInfo("UTC"))
+    edate = edate.astimezone(ZoneInfo("UTC"))
+
     obj.ini_date = idate
     obj.end_date = edate
     obj.finish = True if finish != "" else False
@@ -272,12 +279,16 @@ def report_search(request):
 
 @group_required("Administradores",)
 def report_export(request):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
     header = ['Cliente', 'Empleado', 'Fecha de inicio', 'Fecha de fin', 'Duración del servicio', 'Finalizada']
     values = []
     items = get_report(request)
     for item in items:
-        idate = item.ini_date.strftime("%d-%m-%Y %H:%M")
-        edate = item.end_date.strftime("%d-%m-%Y %H:%M")
+        ini_date = item.ini_date.astimezone(ZoneInfo("Atlantic/Canary"))
+        idate = ini_date.strftime("%d-%m-%Y %H:%M")
+        end_date = item.end_date.astimezone(ZoneInfo("Atlantic/Canary"))
+        edate = end_date.strftime("%d-%m-%Y %H:%M")
         finish = "Si" if item.finish else "No"
         row = [item.client.name, item.employee.name, idate, edate, item.duration, finish]
         values.append(row)

@@ -328,6 +328,26 @@ function showAlert(body, close) {
     $('#common-modal').modal('show');
 }
 
+function UTC2LocalTime(el) {
+    const utcString = el.textContent.trim(); 
+
+    // Convertir a objeto Date (formato DD-MM-YYYY HH:mm)
+    const [day, month, yearAndTime] = utcString.split("-");
+    const [year, time] = yearAndTime.split(" ");
+    const isoString = `${year}-${month}-${day}T${time}:00Z`; // formato ISO en UTC
+    const date = new Date(isoString);
+
+    // Obtener componentes en hora local
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // Meses 0-11
+    const yyyy = date.getFullYear();
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+
+    el.textContent = `${dd}-${mm}-${yyyy} ${hh}:${min}`;
+}
+
+
 $(document).ready(()=>{
     $("body").on("keyup", ".autosearch", function(e){
         var obj = $(this);

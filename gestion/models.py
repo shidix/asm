@@ -67,6 +67,7 @@ def upload_form_qr(instance, filename):
 
 class Client(models.Model):
     inactive = models.BooleanField(default=False, verbose_name=_('Desactivado'));
+    code = models.CharField(max_length=200, verbose_name = _('Code'), default="")
     name = models.CharField(max_length=200, verbose_name = _('Razón Social'), default="")
     phone = models.CharField(max_length=12, verbose_name = _('Teléfono de contacto'), null=True, default='0000000000')
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)

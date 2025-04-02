@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n gestion_tags %}
 
 {%comment%} PC VERSION {%endcomment%}
 
@@ -16,10 +16,10 @@
         <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
             <div class="col-2">{{item.employee.name}}</div>
             <div class="col-2">
-                <span class="badge bg-success-outline">{{item.ini_date|date:"d-m-Y H:i"}}</span></div>
+                <span class="badge bg-success-outline datetime">{{item.ini_date|local_time|date:"d-m-Y H:i"}}</span></div>
             <div class="col-2">
                 {% if item.finish %}
-                    <span class="badge bg-danger-outline">{{item.end_date|date:"d-m-Y H:i"}}</span>
+                    <span class="badge bg-danger-outline datetime">{{item.end_date|local_time|date:"d-m-Y H:i"}}</span>
                 {% endif %}
             </div>
             <div class="col-2">{{item.client.name}}</div>
@@ -46,9 +46,9 @@
         <div class="col-6"> <small><i class="fas fa-user orange"></i> {% trans 'Usuario' %} </small> 
             <br /> <strong>{{item.client.name}}</strong> </div>
         <div class="col-6 mt-2"> <small>{% trans 'Hora entrada' %}</small> <br />
-            <span class="badge bg-success-outline" tyle="color:white !important">{{item.ini_date|date:"d-m-Y H:i"}}</span> </div>
+            <span class="badge bg-success-outline datetime" >{{item.ini_date|local_time|date:"d-m-Y H:i"}}</span> </div>
         <div class="col-6 mt-2"> <small>{% trans 'Hora salida' %}</small> <br />
-            <span class="badge bg-danger-outline" tyle="color:white !important">{{item.end_date|date:"d-m-Y H:i"}}</span>
+            <span class="badge bg-danger-outline datetime" >{{item.end_date|local_time|date:"d-m-Y H:i"}}</span>
         </div>
         <div class="col-12 mt-2"> <small><i class="fas fa-map-marker orange"></i> {% trans 'Dirección' %}</small> 
             <br /><strong>{{item.client.address}}</strong> </div>
@@ -67,8 +67,8 @@
             <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
                 <div class="col-3">{{item.employee.name}}</div>
                 <div class="col-2">
-                    <span class="badge bg-success" style="color:white !important">{{item.ini_date|date:"d-m-Y H:i"}}</span></div>
-                <div class="col-2"><span class="badge bg-danger" style="color:white !important">{{item.end_date|date:"d-m-Y H:i"}}</span></div>
+                    <span class="badge bg-success datetime" style="color:white !important">{{item.ini_date|local_time|date:"d-m-Y H:i"}}</span></div>
+                <div class="col-2"><span class="badge bg-danger datetime" style="color:white !important">{{item.end_date|local_time|date:"d-m-Y H:i"}}</span></div>
                 <div class="col-2">{{item.client.name}}</div>
                 <div class="col-3">{{item.client.address}}</div>
             </div>

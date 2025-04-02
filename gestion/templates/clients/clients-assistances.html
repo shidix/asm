@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n static %}
+{% load i18n static gestion_tags%}
 
 {% block central_content %}
     <div class="content">
@@ -33,9 +33,9 @@
                     {% for item in obj.assistances.all %}
                         <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
                             <div class="col-6">{{item.employee.name}}</div>
-                            <div class="col-3"> <span class="badge bg-success-outline"> {{item.ini_date|date:"d-m-Y H:i"}}</span></div>
+                            <div class="col-3"> <span class="badge bg-success-outline datetime"> {{item.ini_date|local_time|date:"d-m-Y H:i"}}</span></div>
                             <div class="col-3">
-                                {%if item.finish%}<span class="badge bg-danger-outline">{{item.end_date|date:"d-m-Y H:i"}}</span>{%endif%}
+                                {%if item.finish%}<span class="badge bg-danger-outline datetime">{{item.end_date|local_time|date:"d-m-Y H:i"}}</span>{%endif%}
                             </div>
                         </div>
                     {% endfor %}
@@ -60,9 +60,9 @@
                         <div class="col-12"> <small><i class="fas fa-user orange"></i> {% trans 'Trabajador/a' %}</small> <br/> 
                             <strong>{{item.employee.name}}</strong></div>
                         <div class="col-6 mt-2"> <small>{% trans 'Hora entrada' %}</small> <br />
-                            <span class="badge bg-success-outline">{{item.ini_date|date:"d-m-Y H:i"}}</span> </div>
+                            <span class="badge bg-success-outline datetime">{{item.ini_date|local_time|date:"d-m-Y H:i"}}</span> </div>
                         <div class="col-6 mt-2"> <small>{% trans 'Hora salida' %}</small> <br />
-                            <span class="badge bg-danger-outline">{{item.end_date|date:"d-m-Y H:i"}}</span> </div>
+                            <span class="badge bg-danger-outline datetime">{{item.end_date|local_time|date:"d-m-Y H:i"}}</span> </div>
                     </div>
                 {% endfor %}
         </div>
