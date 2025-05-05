@@ -290,7 +290,9 @@ def report_export(request):
         end_date = item.end_date.astimezone(ZoneInfo("Atlantic/Canary"))
         edate = end_date.strftime("%d-%m-%Y %H:%M")
         finish = "Si" if item.finish else "No"
-        row = [item.client.name, item.employee.name, idate, edate, item.duration, finish]
+        client = item.client.name if item.client != None else ""
+        emp = item.employee.name if item.employee != None else ""
+        row = [client, emp, idate, edate, item.duration, finish]
         values.append(row)
     return csv_export(header, values, "empleados")
 

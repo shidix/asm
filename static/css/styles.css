@@ -152,7 +152,7 @@ span.status-completed, span.status-in-process, span.status-pending  {
 
 .content {
 	background: white;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
 	/*height: 95vh;*/
     /*padding-bottom: 5vh !important;*/
 }
