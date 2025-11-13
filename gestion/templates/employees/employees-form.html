@@ -42,14 +42,6 @@
 
     <div class="col-6">
         <div class="greybox-sm p-1">
-            {% trans "Teléfono" %}
-            <input type="text" class="form-control autosave" id="phone" name="phone" value="{{obj.phone|default:""}}" 
-                title="{{obj.phone}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
-                data-target="div-notification" placeholder="Teléfono..." /> <span id="phone__msg"></span>
-        </div>
-    </div>
-    <div class="col-6">
-        <div class="greybox-sm p-1">
             {% trans "Correo electrónico" %}
             <input type="text" class="form-control ark_change" id="email" name="email" value="{{obj.email|default:""}}" 
                 title="{{obj.email}}" data-url="{%url "employees-save-email"%}" data-target="div-notification" data-obj_id="{{obj.id}}"
@@ -61,7 +53,33 @@
             {%endcomment%}
         </div>
     </div>
+    <div class="col-3">
+        <div class="greybox-sm p-1">
+            {% trans "Teléfono" %}
+            <input type="text" class="form-control autosave" id="phone" name="phone" value="{{obj.phone|default:""}}" 
+                title="{{obj.phone}}" data-model-name="gestion.employee" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Teléfono..." /> <span id="phone__msg"></span>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="greybox-sm p-1">
+            {% trans "Zona" %}
+            <select class="form-control autosave" id="zone" name="zone" title="{{obj.zone}}" data-model-name="gestion.employee" 
+                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification" /> 
+                <span id="zone__msg"></span>
+                <option value="">{% trans "-- Seleccione una zona --" %}</option>
+                {% for zone in zone_list %}
+                    <option value="{{zone.id}}" {%if zone.id == obj.zone.id%}selected{%endif%}>{{zone.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
 </div>
+
+{%comment%}
+<div class="row modal-head m-0"><div class="col-11"><i class="fas fa-clock orange"></i>&nbsp; {% trans 'Horarios de:' %} {{obj.name|default:""}}</div></div>
+<div id="div-timetable"> {% include "employees/employees-form-timetable.html" %} </div>
+{%endcomment%}
 
 <div class="d-flex justify-content-end p-2">
     <button type="button" class="btn btn-primary ark" data-bs-dismiss="modal" data-url="{% url "employees-list" %}"

@@ -145,16 +145,15 @@ span.status-completed, span.status-in-process, span.status-pending  {
 /************************
 	UTILITIES		
 ************************/
-
+.orange {
+	color: #e35000;
+}
 .inactive {
 	background-color: #ccc !important;
 }
 
 .content {
 	background: white;
-    /*overflow-y: scroll;*/
-	/*height: 95vh;*/
-    /*padding-bottom: 5vh !important;*/
 }
 
 .gral-acts, .gral-acts:hover {
@@ -166,7 +165,7 @@ span.status-completed, span.status-in-process, span.status-pending  {
 .ml-list {
 	margin-left: 10px;
 }
-
+/*
 .alert-danger.gesp {
 	background-color: #fff;
     	border-color: #ffffff #ffffff #e7f2d8 #ffffff !important;
@@ -185,6 +184,7 @@ span.status-completed, span.status-in-process, span.status-pending  {
 .alert-warning.gesp:hover {
 	background-color: #e7f2d8;
 }
+*/
 
 .btn-submit, .btn-submit:hover {
 	background-color: #424242 !important;
@@ -209,6 +209,18 @@ button.btn.btn-danger.ark.cancel {
 	color: #fff !important;
 }
 
+button.btn.btn-outline-danger.ark {
+    background-color: #fff;
+    border-color: #dc3545;
+    color: #dc3545;
+    padding: 0.175rem 0.35rem;
+}
+
+button.btn.btn-outline-danger.ark:hover {
+    background: #dc3545;
+    color: #fff;
+}
+
 button.btn.btn-primary,
 a.btn.btn-primary, a.btn.btn-secondary, a.btn.btn-primary.ark, a.btn.btn-secondary.ark {
     background-color: #82bc00 !important;
@@ -225,6 +237,25 @@ a.btn.btn-primary:hover, a.btn.btn-secondary:hover, a.btn.btn-primary.ark:hover,
 	color: #3b693a !important;
 	border:1px solid #3b693a !important;
 }
+
+button.btn.btn-timetable {
+	background-color: #f2902d !important;
+	border:1px solid #f2902d !important;
+	font-size:1rem !important;
+	color: white !important;
+	font-weight: 600;
+}
+button.btn.btn-timetable i {
+	color: white !important;
+}
+
+button.btn.btn-timetable:hover {
+	background-color: #e35000 !important;
+	border:1px solid #e35000 !important;
+}
+
+
+
 
 .btn.btn-sm.new,
 .btn.btn-sm.ark.new,
@@ -262,17 +293,16 @@ label.btn-tools.tools-primary:hover {
 i.fas.fa-upload { color: #75b198; }
 i.fas.fa-upload:hover { color: #4b7764; }
 
-i.fas.fa-route.white, i.fa.fa-truck, i.fa.fa-warehouse, i.fas.fa-times, i.far.fa-users, i.fas.fa-users.orange, i.fa.fa-medkit.orange, i.fa.fa-phone, i.fa.fa-envelope,
-i.fas.fa-keyboard.orange {
+i.fas.fa-route.white, i.fa.fa-truck, i.fa.fa-warehouse, i.fas.fa-times, i.far.fa-users, i.fas.fa-users.orange, i.fa.fa-medkit.orange, i.fa.fa-phone, i.fa.fa-envelope, i.fas.fa-keyboard.orange, i.fas.fa-clock.orange {
 	/*font-size: 1.3rem;*/
-	color: #f2902d;
+	color: #e35000;
 }
 i.fas.fa-user.orange,
 i.fas.fa-phone.orange,
 i.fas.fa-envelope.orange,
 i.fas.fa-comments.orange,
 i.fas.fa-map-marker.orange {
-	color: #f2902d;
+	color: #e35000;
 }
 
 img.img-fluid {
@@ -367,6 +397,44 @@ span.status-info {
     background-color: #f6e5c6;
     font-weight: 600;
 }
+
+
+/*** JOBS ***/
+
+.toolbar-jobs {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+.toolbar-jobs h2 {
+	color: #e35000;
+	font-size: 1.25rem;
+	line-height: 1.5;
+	margin-bottom:0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.toolbar-jobs i.orange {
+	color: #e35000;
+	font-size: 1rem !important;
+}
+
+.client {
+	background: #fff0e8;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 0.95rem;
+}
+
+.dateline {
+	border: 1px solid #fff; 
+	background: #074f311c;
+}
+
+
+/*** JOBS ***/
 
 .toolbar-content {
 	display: flex;
@@ -467,8 +535,10 @@ input.form-control.login {
 /************* Modal popup styles ***********/
 
 .modal-content {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.3rem;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 0.3rem;
+	font-size: 0.95rem;
+	max-width: 1200px;
 }
 
 .modal-head {
@@ -527,6 +597,35 @@ select.input {
 .permanent, .one-use {
     font-size: 0.8rem;
 }
+
+
+.timetable-boxes {
+	box-shadow: 0 0.125rem 0.25rem rgba(2, 6, 23, 0.075);
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.day-box {
+	border: 1px solid #dfdfdf;
+	box-shadow: 0 0.125rem 0.25rem rgba(2, 6, 23, 0.075);
+	border-radius: 0.25rem;
+}
+.day-box:hover {
+	border: 1px solid #f2902d;
+}
+
+input.border,
+select.border {
+	border: 1px solid #cccccc !important;
+}
+.timetable-head {
+	background: #074f311c;
+}
+.timetable-items {
+	background: #fff6ed; 
+	border-top: 2px solid #fff; 
+	border-bottom: 2px solid #fff;
+}
+
 
 /************* btn styles ***********/
 

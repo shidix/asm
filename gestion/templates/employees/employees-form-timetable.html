@@ -1,0 +1,59 @@
+{% load i18n %}
+
+<form class="form m-0" method="GET" action="{% url "employees-form-timetable" %}" id="form-save">
+    {%csrf_token%}
+    <input type="hidden" id="obj_id" name="obj_id" value="{{obj.id}}" />
+
+	<div class="row my-2 m-0 px-0 justify-center timetable-boxes">
+		<div class="col-12">
+			<div class="row">
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Lunes"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="0"/></div></div>
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Martes"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="1"/></div></div>
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Miércoles"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="2"/></div></div>
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Jueves"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="3"/></div></div>
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Viernes"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="4"/></div></div>
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Sábado"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="5"/></div></div>
+				<div class="col-lg-1 col-3 text-center p-2"><div class="day-box p-2">{%trans "Domingo"%}<br />
+                    <input type="checkbox" class="form-checkbox" name="day" value="6"/></div></div>
+				<div class="col-lg-2 offset-lg-1 col-6 text-center p-2">{%trans "Hora de inicio"%} 
+                    <input type="time" class="form-control border py-1" id="ini" name="ini"/></div> 
+				<div class="col-lg-2 col-6 text-center p-2">{%trans "Hora de fin"%} 
+                    <input type="time" class="form-control border py-1" id="end" name="end"/></div> 	
+			</div>
+		</div>
+		<div class="col-lg-4 offset-lg-4 text-center mt-3">
+            <button class="btn btn-timetable saveform w-100" data-form="form-save" data-target="div-timetable">
+                <i class="fas fa-plus"></i> Añadir horario</button> 
+        </div>
+	</div>
+</form>
+
+<div class="row my-2 m-0 px-0 justify-center timetable-boxes">
+	<div class="row m-0 timetable-head">
+		<div class="col-4"><strong>{% trans "Día" %}</strong></div>
+		<div class="col-3 text-center"><strong>{% trans "Hora de Inicio" %}</strong></div>
+		<div class="col-3 text-center"><strong>{% trans "Hora de Fin" %}</strong></div>
+		{#<div class="col-3">{% trans "Trabajador/a" %}</div>#}
+		<div class="col-2 text-end"></div>
+	</div>
+
+	{% for item in obj.timetables.all %}
+	<div class="row m-0 timetable-items">
+		<div class="col-4"><small>{{item.week_day}}</small></div>
+		<div class="col-3 text-center"><small>{{item.ini}}</small></div>
+		<div class="col-3 text-center"><small>{{item.end}}</small></div>
+		{#<div class="col-3">{{item.client}}</div>#}
+		<div class="col-2 text-end">
+			<button class="btn btn-outline-danger ark" data-url="{%url "employees-form-timetable-remove"%}" data-target="div-timetable"
+				data-obj_id="{{item.id}}" data-confirm="{% trans "Está seguro de que desea borrar este elemento?" %}"> 
+				<small> Eliminar</small></button>
+		</div>
+	</div>
+	{% endfor %}
+</div>

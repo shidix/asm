@@ -1,15 +1,21 @@
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db.models import Q
+from django.db.models import CharField
+from django.contrib.postgres.lookups import Unaccent
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
 from datetime import datetime
+import calendar
 import os, csv
 
 from asm.decorators import group_required
 from asm.commons import get_float, get_int, get_or_none, get_param, get_session, set_session, show_exc, generate_qr, csv_export
-from .models import Employee, Client, Assistance
+from .models import Employee, Client, Assistance, ClientTimetable, Zone, Incident
 
+CharField.register_lookup(Unaccent)
 ACCESS_PATH="{}/gestion/assistances/client/".format(settings.MAIN_URL)
 
 
@@ -24,7 +30,7 @@ def get_assistances(request):
 
     kwargs = {"ini_date__gte": i_date, "ini_date__lte": e_date}
     if value != "":
-        kwargs["employee__name__icontains"] = value
+        kwargs["employee__name__unaccent__icontains"] = value
 
     return Assistance.objects.filter(**kwargs).order_by("-ini_date")
 
@@ -92,13 +98,23 @@ def assistances_client(request, client_id):
     EMPLOYEES
 '''
 def get_employees(request):
+
     search_value = get_session(request, "s_emp_name")
-    filters_to_search = ["name__icontains",]
-    full_query = Q()
-    if search_value != "":
-        for myfilter in filters_to_search:
-            full_query |= Q(**{myfilter: search_value})
-    return Employee.objects.filter(full_query)
+    search_comp = get_session(request, "s_emp_comp")
+    kwargs = {}
+    if search_value != "" or search_comp != "":
+        if search_value != "":
+            kwargs["name__unaccent__icontains"] = search_value
+        if search_comp != "":
+            kwargs["timetables__client__name__unaccent__icontains"] = search_comp
+        return Employee.objects.filter(**kwargs)
+    return Employee.objects.all()
+    #filters_to_search = ["name__icontains",]
+    #full_query = Q()
+    #if search_value != "":
+    #    for myfilter in filters_to_search:
+    #        full_query |= Q(**{myfilter: search_value})
+    #return Employee.objects.filter(full_query)
 
 @group_required("Administradores",)
 def employees(request):
@@ -113,6 +129,7 @@ def employees_list(request):
 @group_required("Administradores",)
 def employees_search(request):
     set_session(request, "s_emp_name", get_param(request.GET, "s_emp_name"))
+    set_session(request, "s_emp_comp", get_param(request.GET, "s_emp_comp"))
     set_session(request, "s_emp_idate", get_param(request.GET, "s_emp_idate"))
     set_session(request, "s_emp_edate", get_param(request.GET, "s_emp_edate"))
     return render(request, "employees/employees-list.html", {"items": get_employees(request)})
@@ -123,7 +140,7 @@ def employees_form(request):
     obj = get_or_none(Employee, obj_id)
     if obj == None:
         obj = Employee.objects.create()
-    return render(request, "employees/employees-form.html", {'obj': obj})
+    return render(request, "employees/employees-form.html", {'obj': obj, 'zone_list': Zone.objects.all(), 'client_list': Client.objects.all()})
 
 @group_required("Administradores",)
 def employees_remove(request):
@@ -133,6 +150,29 @@ def employees_remove(request):
             obj.user.delete()
         obj.delete()
     return render(request, "employees/employees-list.html", {"items": get_employees(request)})
+
+@group_required("Administradores",)
+def employees_form_timetable(request):
+    obj = get_or_none(Employee, get_param(request.GET, "obj_id"))
+    #print(obj)
+    if obj != None:
+        client = get_or_none(Client, get_param(request.GET, "client"))
+        days = request.GET.getlist("day")
+        ini = get_param(request.GET, "ini")
+        end = get_param(request.GET, "end")
+        for day in days:
+            ClientTimetable.objects.create(client=client, employee=obj, day=day, ini=ini, end=end)
+    return render(request, "employees/employees-form-timetable.html", {'obj': obj, 'client_list': Client.objects.all()})
+
+@group_required("Administradores",)
+def employees_form_timetable_remove(request):
+    obj = get_or_none(ClientTimetable, get_param(request.GET, "obj_id"))
+    emp = None
+    #print(obj)
+    if obj != None:
+        emp = obj.employee
+        obj.delete()
+    return render(request, "employees/employees-form-timetable.html", {'obj': emp, 'client_list': Client.objects.all(),})
 
 @group_required("Administradores",)
 def employees_save_email(request):
@@ -156,21 +196,32 @@ def employees_export(request):
         values.append(row)
     return csv_export(header, values, "empleados")
 
+@group_required("admins")
+def employees_import_csv(request):
+    return render(request, "employees/import-csv.html", {})
+
 @group_required("Administradores",)
 def employees_import(request):
     f = request.FILES["file"]
-    lines = f.read().decode('latin-1').splitlines()
+    lines = f.read().decode('utf-8').splitlines()
     i = 0
     for line in lines:
         if i > 0:
             l = line.split(";")
-            #print(l)
-            name = "{} {}".format(l[1], l[0])
-            phone = l[2]
-            email = l[7]
-            dni = l[6]
-            obj, created = Employee.objects.get_or_create(pin=dni, dni=dni, name=name, phone=phone, email=email)
-            obj.save_user()
+            obj = Employee.objects.filter(dni=l[2]).first()
+            if obj == None:
+                obj = Employee.objects.create(dni=l[2])
+            print(l)
+            obj.name = "{} {}".format(l[0], l[1])
+            obj.phone = l[4]
+            obj.email = l[3]
+            obj.dni = l[2]
+            obj.save()
+            #obj, created = Employee.objects.get_or_create(pin=dni, dni=dni, name=name, phone=phone, email=email)
+            try:
+                obj.save_user()
+            except Exception as e:
+                print(e)
         i += 1
     return redirect("employees")
 
@@ -179,7 +230,7 @@ def employees_import(request):
 '''
 def get_clients(request):
     search_value = get_session(request, "s_cli_name")
-    filters_to_search = ["name__icontains",]
+    filters_to_search = ["name__unaccent__icontains",]
     full_query = Q()
     if search_value != "":
         for myfilter in filters_to_search:
@@ -211,7 +262,20 @@ def clients_form(request):
         img_data = ContentFile(generate_qr(url, path))
         obj.qr.save('qr_{}.png'.format(obj.id), img_data, save=True)
         new = True
-    return render(request, "clients/clients-form.html", {'obj': obj, 'new': new})
+    return render(request, "clients/clients-form.html", {'obj': obj, 'new': new, 'emp_list': Employee.objects.all()})
+
+@group_required("Administradores",)
+def clients_form_timetable(request):
+    obj = get_or_none(Client, get_param(request.GET, "obj_id"))
+    #print(obj)
+    if obj != None:
+        emp = get_or_none(Employee, get_param(request.GET, "employee"))
+        days = request.GET.getlist("day")
+        ini = get_param(request.GET, "ini")
+        end = get_param(request.GET, "end")
+        for day in days:
+            ClientTimetable.objects.create(client=obj, employee=emp, day=day, ini=ini, end=end)
+    return render(request, "clients/clients-form-timetable.html", {'obj': obj, 'emp_list': Employee.objects.all()})
 
 @group_required("Administradores",)
 def clients_remove(request):
@@ -220,6 +284,16 @@ def clients_remove(request):
         obj.qr.delete(save=True)
         obj.delete()
     return render(request, "clients/clients-list.html", {"items": get_clients(request)})
+
+@group_required("Administradores",)
+def clients_form_timetable_remove(request):
+    obj = get_or_none(ClientTimetable, get_param(request.GET, "obj_id"))
+    client = None
+    #print(obj)
+    if obj != None:
+        client = obj.client
+        obj.delete()
+    return render(request, "clients/clients-form-timetable.html", {'obj': client, 'emp_list': Employee.objects.all(),})
 
 @group_required("Administradores",)
 def clients_print_all_qr(request):
@@ -232,6 +306,34 @@ def clients_print_qr(request, obj_id):
 @group_required("Administradores",)
 def clients_assistances(request, obj_id):
     return render(request, "clients/clients-assistances.html", {"obj": get_or_none(Client, obj_id)})
+
+@group_required("admins")
+def clients_import_csv(request):
+    return render(request, "clients/import-csv.html", {})
+
+@group_required("admins")
+def clients_import(request):
+    try:
+        f = request.FILES["file"]
+
+        lines = f.read().decode('utf-8').splitlines()
+        i = 0
+        for line in lines:
+            if i > 0:
+                l = line.split(";")
+                print(l)
+                obj = Client.objects.filter(code=l[1]).first()
+                if obj == None:
+                    obj = Client.objects.create(code=l[1])
+                obj.name = l[0]
+                obj.addess = l[2]
+                obj.phone = l[3]
+                obj.email = l[4]
+                obj.save()
+            i += 1
+        return redirect("clients")
+    except Exception as e:
+        return render(request, 'error_exception.html', {'exc':show_exc(e)})
 
 '''
     REPORT
@@ -250,9 +352,9 @@ def get_report(request):
 
     kwargs = {"ini_date__range": (i_date, e_date)}
     if cli != "":
-        kwargs["client__name__icontains"] = cli
+        kwargs["client__name__unaccent__icontains"] = cli
     if emp != "":
-        kwargs["employee__name__icontains"] = emp
+        kwargs["employee__name__unaccent__icontains"] = emp
 
     return Assistance.objects.filter(**kwargs)
 
@@ -295,5 +397,124 @@ def report_export(request):
         row = [client, emp, idate, edate, item.duration, finish]
         values.append(row)
     return csv_export(header, values, "empleados")
+
+@group_required("Administradores",)
+def report_search_emp(request):
+    try:
+        value = get_param(request.GET, "value")
+        items = Employee.objects.filter(name__unaccent__icontains=value) if value != "" else []
+        return render(request, "report/report-search-emp.html", {'items': items, 'value':value})
+    except Exception as e:
+        return render(request, "error_exception.html", {'exc':show_exc(e)})
+
+@group_required("Administradores",)
+def report_search_cli(request):
+    try:
+        value = get_param(request.GET, "value")
+        items = Client.objects.filter(name__unaccent__icontains=value) if value != "" else []
+        return render(request, "report/report-search-cli.html", {'items': items, 'value':value})
+    except Exception as e:
+        return render(request, "error_exception.html", {'exc':show_exc(e)})
+
+
+'''
+    EMPLOYEES
+'''
+@group_required("Administradores",)
+def employee(request, obj_id):
+    idate = datetime.today().replace(day=1)
+    last_day = calendar.monthrange(idate.year, idate.month)[1]
+    edate = idate.replace(day=last_day)
+    set_session(request, "s_employee_idate", idate.strftime("%Y-%m-%d"))
+    set_session(request, "s_employee_edate", edate.strftime("%Y-%m-%d"))
+    emp = get_or_none(Employee, obj_id)
+    return render(request, "employee/clients.html", {"obj": emp})
+
+@group_required("Administradores",)
+def employee_search(request):
+    obj_id = get_param(request.GET, "obj_id")
+    set_session(request, "s_employee_idate", get_param(request.GET, "s_employee_idate"))
+    set_session(request, "s_employee_edate", get_param(request.GET, "s_employee_edate"))
+    return redirect(reverse('employee', kwargs={'obj_id': obj_id}))
+
+@group_required("Administradores",)
+def employee_search_client(request):
+    try:
+        value = get_param(request.GET, "value")
+        obj = get_or_none(Employee, get_param(request.GET, "obj_id"))
+        items = []
+        if value != "":
+            items = Client.objects.filter(name__unaccent__icontains=value)
+        return render(request, "employee/client-search-list.html", {'items': items, 'obj': obj, 'value':value})
+    except Exception as e:
+        return render(request, "error_exception.html", {'exc':show_exc(e)})
+
+@group_required("Administradores",)
+def employee_form_timetable(request):
+    obj = get_or_none(Employee, get_param(request.GET, "obj_id"))
+    if obj != None:
+        client = get_or_none(Client, get_param(request.GET, "client_id"))
+        days = request.GET.getlist("day")
+        ini = get_param(request.GET, "ini")
+        end = get_param(request.GET, "end")
+        for day in days:
+            ClientTimetable.objects.create(client=client, employee=obj, day=day, ini=ini, end=end)
+    return redirect(reverse('employee', kwargs={'obj_id': obj.id}))
+    #return render(request, "employees/employees-form-timetable.html", {'obj': obj, 'client_list': Client.objects.all()})
+
+@group_required("Administradores",)
+def employee_form_timetable_remove(request, obj_id):
+    obj = get_or_none(ClientTimetable, obj_id)
+    emp = None
+    if obj != None:
+        emp = obj.employee
+        obj.delete()
+    return redirect(reverse('employee', kwargs={'obj_id': emp.id}))
+
+
+'''
+    INCIDENTS
+'''
+def get_incidents(request):
+    i_date = datetime.strptime("{} 00:00".format(get_session(request, "s_inc_idate")), "%Y-%m-%d %H:%M")
+    e_date = datetime.strptime("{} 23:59".format(get_session(request, "s_inc_edate")), "%Y-%m-%d %H:%M")
+    status = get_session(request, "s_inc_status")
+    emp = get_session(request, "s_inc_emp")
+
+    kwargs = {"creation_date__range": (i_date, e_date),}
+    if status != "": 
+        kwargs['closed'] = True if status == "True" else False
+    if emp != "": 
+        user_list = [item.user for item in Employee.objects.filter(name__unaccent__icontains=emp)]
+        kwargs['owner__in'] = user_list
+    return Incident.objects.filter(**kwargs)
+
+@group_required("Administradores",)
+def incidents(request):
+    init_session_date(request, "s_inc_idate")
+    init_session_date(request, "s_inc_edate")
+    set_session(request, "s_inc_status", "False")
+    return render(request, "incidents/incidents.html", {"items": get_incidents(request)})
+
+@group_required("Administradores",)
+def incidents_list(request):
+    item_list = get_incidents(request)
+    return render(request, "incidents/incidents-list.html", {"items": item_list})
+
+@group_required("Administradores",)
+def incidents_search(request):
+    set_session(request, "s_inc_idate", get_param(request.GET, "s_inc_idate"))
+    set_session(request, "s_inc_edate", get_param(request.GET, "s_inc_edate"))
+    set_session(request, "s_inc_status", get_param(request.GET, "s_inc_status"))
+    set_session(request, "s_inc_emp", get_param(request.GET, "s_inc_emp"))
+    item_list = get_incidents(request)
+    return render(request, "incidents/incidents-list.html", {"items": item_list,})
+
+@group_required("Administradores",)
+def incidents_form(request):
+    obj = get_or_none(Incident, get_param(request.GET, "obj_id"))
+    if obj == None:
+        return render(request, "error_exception.html", {'exc': 'Object not found!'})
+    return render(request, "incidents/incidents-form.html", {'obj': obj,})
 
 

@@ -17,24 +17,46 @@ urlpatterns = [
     path('employees/form', views.employees_form, name='employees-form'),
     path('employees/remove', views.employees_remove, name='employees-remove'),
     path('employees/save-email', views.employees_save_email, name='employees-save-email'),
+    path('employees/form/timetable', views.employees_form_timetable, name='employees-form-timetable'),
+    path('employees/form/timetable/remove', views.employees_form_timetable_remove, name='employees-form-timetable-remove'),
     path('employees/export', views.employees_export, name='employees-export'),
+    path('employees/import-csv', views.employees_import_csv, name='employees-import-csv'),
     path('employees/import', views.employees_import, name='employees-import'),
+
+    #---------------------- EMPLOYEE -----------------------
+    path('employee/<int:obj_id>', views.employee, name='employee'),
+    path('employee/search', views.employee_search, name='employee-search'),
+    path('employee/search-client', views.employee_search_client, name='employee-search-client'),
+    path('employee/form/timetable', views.employee_form_timetable, name='employee-form-timetable'),
+    path('employee/form/timetable/remove/<int:obj_id>', views.employee_form_timetable_remove, name='employee-form-timetable-remove'),
 
     #------------------------- CLIENTS -----------------------
     path('clients', views.clients, name='clients'),
     path('clients/list', views.clients_list, name='clients-list'),
     path('clients/search', views.clients_search, name='clients-search'),
     path('clients/form', views.clients_form, name='clients-form'),
+    path('clients/form/timetable', views.clients_form_timetable, name='clients-form-timetable'),
     path('clients/remove', views.clients_remove, name='clients-remove'),
+    path('clients/form/timetable/remove', views.clients_form_timetable_remove, name='clients-form-timetable-remove'),
     path('clients/print-all-qr', views.clients_print_all_qr, name='clients-print-all-qr'),
     path('clients/print-qr/<int:obj_id>', views.clients_print_qr, name='clients-print-qr'),
     path('clients/assistances/<int:obj_id>', views.clients_assistances, name='clients-assistances'),
+    path('clients/import-csv/', views.clients_import_csv, name='clients-import-csv'),
+    path('clients/import/', views.clients_import, name='clients-import'),
 
     #---------------------- ASSISTANCES -----------------------
     path('report', views.report, name='report'),
     path('report/list', views.report_list, name='report-list'),
     path('report/search', views.report_search, name='report-search'),
     path('report/export', views.report_export, name='report-export'),
+    path('report/search-emp', views.report_search_emp, name='report-search-emp'),
+    path('report/search-cli', views.report_search_cli, name='report-search-cli'),
+
+    #---------------------- INCIDENTS -----------------------
+    path('incidents', views.incidents, name='incidents'),
+    path('incidents/list', views.incidents_list, name='incidents-list'),
+    path('incidents/search', views.incidents_search, name='incidents-search'),
+    path('incidents/form', views.incidents_form, name='incidents-form'),
 
     #---------------------- AUTO -----------------------
     path('autosave_field/', auto_views.autosave_field, name='autosave_field'),

@@ -1,0 +1,31 @@
+{% load i18n %}
+
+
+<h2 class="common-modal-head">
+    <div class="row">
+        <div class="col-11"><h2>{% trans 'Importar clientes' %}</h2></div>
+        <div class="col-1"><button type="button" class="btn btn-sm ark" data-bs-dismiss="modal" data-url="{%url "clients-list"%}" 
+        data-target="client-list"><i class="fas fa-times"></i></button></div>
+    </div>
+</h2>
+
+<span id="div-notification"></span>
+
+<form method="POST" action="{% url "employees-import" %}" id="form-rooms-import" enctype="multipart/form-data">
+    {%csrf_token%}
+    <div class="row m-0 mt-2">
+        <div class="col-12 p-0">
+            <div class="info-box green adm m-1 p-2">
+                <span class="title">{% trans "File" %}</span><span class="icon"><i class="fa fa-sort"></i></span><br /><br />
+                <span class="text-right"><input type="file" class="form-control input" id="file" name="file"/></span>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-11 text-end">
+            <input type="submit" class="btn btn-sm save" data-bs-dismiss="modal" value="{%trans "Save"%}"/>
+            <button type="button" class="btn btn-sm cancel" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+        </div>
+    </div>
+</form>

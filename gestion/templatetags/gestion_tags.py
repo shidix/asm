@@ -46,6 +46,22 @@ def get_worked_time(emp, ini_date, end_date):
     hours, minutes = emp.worked_time(ini_date, end_date)
     return "{} horas y {} minutos".format(hours, minutes)
 
+@register.simple_tag()
+def get_client_worked_time(emp, client, ini_date, end_date):
+    hours, minutes = emp.client_worked_time(client, ini_date, end_date)
+    return "{} horas y {} minutos".format(hours, minutes)
+
+@register.simple_tag()
+def get_client_work(emp, client):
+    hours, mins = emp.client_work(client)
+    return f"{hours} horas {mins} minutos"
+
+@register.simple_tag()
+def get_client_assigned_work(client):
+    hours, mins = client.assigned_work()
+    return f"{hours} horas {mins} minutos"
+
+
 @register.filter
 def local_time(mydate):
     from datetime import datetime

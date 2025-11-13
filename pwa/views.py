@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 from asm.decorators import group_required_pwa
-from asm.commons import user_in_group, get_or_none, get_param
-from gestion.models import Employee, Client, Assistance
+from asm.commons import user_in_group, get_or_none, get_param, show_exc, get_random_str
+from gestion.models import Employee, Client, Assistance, Incident
 
 
 @group_required_pwa("employees")
@@ -48,8 +48,16 @@ def pin_logout(request):
 '''
 @group_required_pwa("employees")
 def employee_home(request):
+    #qr_list = request.user.employee.client_list(True)
+    #print(sad_list)
+    #print(qr_list)
+    sad_list = []
+    qr_list = []
     assistance = Assistance.objects.filter(employee=request.user.employee, finish=False).first()
-    return render(request, "pwa/employees/home.html", {"obj": assistance})
+    if assistance == None:
+        sad_list = request.user.employee.client_list(False)
+        qr_list = request.user.employee.client_list(True)
+    return render(request, "pwa/employees/home.html", {"obj": assistance, 'sad_list': sad_list, 'qr_list': qr_list})
 
 @group_required_pwa("employees")
 def employee_qr_scan(request):
@@ -132,3 +140,59 @@ def employee_code_finish(request):
     except Exception as e:
         return render(request, "pwa/employees/qr-error.html", {})
  
+@group_required_pwa("employees")
+def employee_client(request, obj_id):
+    try:
+        client = get_or_none(Client, obj_id)
+        if client == None:
+            return render(request, "pwa/employees/qr-error.html", {})
+
+        obj = Assistance.objects.create(client=client, employee=request.user.employee, ini_date=datetime.now())
+        if client.observations != "":
+            return render(request, "pwa/employees/client-obs.html", {"client": client})
+        return redirect("pwa-home")
+    except Exception as e:
+        print(e)
+        return render(request, "pwa/employees/qr-error.html", {})
+
+@group_required_pwa("employees")
+def employee_client_finish(request, obj_id):
+    try:
+        client = get_or_none(Client, obj_id)
+        if client == None:
+            return render(request, "pwa/employees/qr-error.html", {})
+
+        obj = Assistance.objects.filter(client=client, employee=request.user.employee, finish=False).order_by("-ini_date").first()
+        obj.end_date = datetime.now() 
+        obj.finish = True
+        obj.save()
+        return redirect("pwa-home")
+    except Exception as e:
+        return render(request, "pwa/employees/qr-error.html", {})
+ 
+'''
+    INCIDENTS
+'''
+@group_required_pwa("employees")
+def incidents(request):
+    now = datetime.now()
+    idate = now.replace(hour=0, minute=0)
+    edate = now.replace(hour=23, minute=59)
+    item_list = Incident.objects.filter(owner=request.user, creation_date__range=(idate, edate))
+    return render(request, "pwa/incidents/incidents.html", {'item_list': item_list})
+
+@group_required_pwa("employees")
+def incidents_add(request):
+    return render(request, "pwa/incidents/incidents-form.html", {})
+
+@group_required_pwa("employees")
+def incidents_save(request):
+    try:
+        code = get_random_str(9)
+        subject = get_param(request.POST, "subject")
+        description = get_param(request.POST, "description")
+        incident = Incident.objects.create(code=code, subject=subject, description=description, owner=request.user)
+        return redirect("pwa-incidents")
+    except Exception as e:
+        return (render(request, "error_exception.html", {'exc':show_exc(e)}))
+

@@ -14,9 +14,11 @@
     <div class="content mt-4">
         <div class="toolbar-content p-3">
 	        <h2 class="pathway b-right">
-                {%trans 'Clientes'%} <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
+                {%trans 'Clientes'%} {#<span id="items-counter" class="badge badge-secondary">{{items|length}}</span>#}</h2>
             <a class="btn btn-sm new" href="{% url "clients-print-all-qr" %}" title="{% trans 'Imprimir' %}" target="_blank"> 
                 <i class="fas fa-print"></i> {% trans "Imprimir QRs" %}</a> 
+            <a class="btn btn-sm new ark" data-url="{% url "clients-import-csv" %}" data-target-modal="common-modal">
+                <i class="fas fa-file-import"></i> {%trans "Importar clientes"%}</a>
             <button type="button" class="btn btn-sm ark new" data-url="{%url "clients-form"%}" data-target-modal="common-modal"> 
                 <i class="fas fa-plus"></i> {% trans 'Nuevo Cliente' %}</button> 
         </div>

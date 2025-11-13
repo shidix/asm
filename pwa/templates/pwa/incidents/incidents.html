@@ -1,0 +1,21 @@
+{% extends "pwa-base.html" %}
+{% load i18n %}
+
+{% block content%}
+    <div class="row incident-content mx-0 p-0">
+        <div class="col-12 px-3" style=" position:fixed; top:70px"> 
+            <a class="btn btn-md btn-outline-warning p-2 w-100 bg-white" href="{% url "pwa-incidents-add" %}">
+		        <strong><i class="fa fa-warning"></i> {% trans "CREAR NUEVA INCIDENCIA" %}</strong></a> 
+        </div>
+        {% for item in item_list %}
+	        <div class="row m-0 my-1 mt-1 incident-item py-2">
+        	    <div class="col-12"><strong>{%trans "Asunto" %}</strong>:<br /> {{item.subject}}</div>
+        	    <div class="col-12 pt-2 pb-2"><strong>{%trans "Descripción" %}</strong>:<br /> {{item.description}}</div>
+			    <div class="col-5"><strong>{%trans "Código" %}</strong>:<br /> {{item.code}}</div>
+                <div class="col-5"><strong>{%trans "Fecha" %}</strong>:<br /> {{item.creation_date|date:"d-m-Y H:i"}}</div>
+			    <div class="col-2 text-center"><strong>{%trans "Estado" %}</strong>:<br /> 
+	                {%if item.closed%}{% trans "Cerrada" %}{%else%}{% trans "Abierta" %}{%endif%}</div>
+	       	</div>
+        {% endfor %}
+    </div>
+{% endblock %}

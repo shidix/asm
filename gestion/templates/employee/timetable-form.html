@@ -1,0 +1,47 @@
+{% load i18n %}
+
+
+<form class="form m-0" method="GET" action="{% url "employee-form-timetable" %}" id="form-save">
+    {%csrf_token%}
+    <input type="hidden" id="obj_id" name="obj_id" value="{{obj.id}}" />
+    <input type="hidden" id="client_id" name="client_id" value="" />
+
+    <div class="row my-2 mx-1 px-0 justify-center timetable-boxes">
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">{%trans "Lunes"%} <br/>
+		<input type="checkbox" class="form-checkbox" name="day" value="0"/></div> </div>
+
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">
+            {%trans "Martes"%} <br/><input type="checkbox" class="form-checkbox" name="day" value="1"/>
+        </div> </div>
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">
+            {%trans "Miércoles"%} <br/><input type="checkbox" class="form-checkbox" name="day" value="2"/>
+        </div> </div>
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">
+            {%trans "Jueves"%} <br/><input type="checkbox" class="form-checkbox" name="day" value="3"/>
+        </div> </div>
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">
+            {%trans "Viernes"%} <br/><input type="checkbox" class="form-checkbox" name="day" value="4"/>
+        </div> </div>
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">
+            {%trans "Sábado"%} <br/><input type="checkbox" class="form-checkbox" name="day" value="5"/>
+        </div> </div>
+        <div class="col-lg-1 col-3 text-center p-2"> <div class="day-box p-2">
+            {%trans "Domingo"%} <br/><input type="checkbox" class="form-checkbox" name="day" value="6"/>
+        </div> </div>
+        <div class="col-lg-1 col-3 text-center p-2">
+            {%trans "Hora de inicio"%} <input type="time" class="form-control border py-1" id="ini" name="ini"/>
+        </div>
+        <div class="col-lg-1 col-3 text-center p-2">
+            {%trans "Hora de fin"%} <input type="time" class="form-control border py-1" id="end" name="end"/>
+        </div>
+        <div class="col-lg-2 offset-1 col-8 text-center p-2">
+            <button type="submit" class="btn btn-timetable w-100"><i class="fas fa-plus"></i> Añadir horario</button>
+            {%comment%}
+            <button class="btn btn-primary btn-xs saveform" data-form="form-save" data-target="div-timetable">
+                <i class="fas fa-plus"></i></button>
+            {%endcomment%}
+        </div>
+    </div>
+</form>
+
+

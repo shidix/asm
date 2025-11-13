@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block central_content %}
+    <div class="row toolbar-search p-2 m-0">{% include "employee/employee-search.html" %}</div>
+    <div class="content mt-3">
+        <div id="client-list" class="ml-list">{% include "employee/client-list.html" %}</div>
+    </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}

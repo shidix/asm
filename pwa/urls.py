@@ -17,5 +17,13 @@ urlpatterns = [
     path('employee/code-read', views.employee_code_read, name="pwa-code-read"),
     path('employee/code-finish', views.employee_code_finish, name="pwa-code-finish"),
     #path('employee/qr-finish/<int:obj_id>', views.employee_qr_finish, name="pwa-qr-finish"),
+    path('employee/client/<int:obj_id>', views.employee_client, name="pwa-employee-client"),
+    path('employee/client/finish/<int:obj_id>', views.employee_client_finish, name="pwa-employee-client-finish"),
+        
+    # INCIDENTS
+    path('incidents/incidents', views.incidents, name="pwa-incidents"),
+    path('incidents/incidents/add', views.incidents_add, name="pwa-incidents-add"),
+    path('incidents/incidents/save', views.incidents_save, name="pwa-incidents-save"),
+
 ]
 

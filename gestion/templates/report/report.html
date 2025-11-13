@@ -7,8 +7,8 @@
         {%comment%} PC VERSION {%endcomment%}
         <div class="d-none d-lg-block"> 
             <div class="row toolbar-content py-3 m-0">
-                <div class="col-6"><h2 class="pathway b-right">
-                    {%trans 'Asistencias'%} <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2></div>
+                <div class="col-6"><h2 class="pathway b-right">{%trans 'Asistencias'%} 
+                    {#<span id="items-counter" class="badge badge-secondary">{{items|length}}</span>#}</h2></div>
                 <div class="col-6 text-end"> <a class="btn btn-xs exp w-100" href="{% url "report-export" %}" 
                     title="{% trans 'Exportar a CSV' %}" target="_blank"><i class="fas fa-file-csv"></i> {% trans "Exportar" %}</a>
                 </div>

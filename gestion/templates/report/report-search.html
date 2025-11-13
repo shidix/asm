@@ -15,11 +15,23 @@
         <div class="col-7 b-search">
             <div class="row">
                 <div class="col-2 py-2 text-end d-none d-lg-block"> <span>{% trans "Trabajador/a:" %}</span> </div>
-                <div class="col-4"> <input type="text" class="form-control form-control-dark w-100 py-2" 
-                    name="s_rep_emp" id="s_rep_emp" placeholder="Nombre trabajador/a" value="{{request.session.s_rep_emp}}"/> </div>
+                <div class="col-4"> 
+                    <input type="hidden" class="form-control form-control-dark w-100 py-2" 
+                        name="s_rep_emp" id="s_rep_emp" placeholder="Nombre trabajador/a" value="{{request.session.s_rep_emp}}"/> 
+
+                    <input class="form-control input autocomplete" id="rep_emp" name="rep_emp" placeholder="Nombre trabajador/a"
+                        value="" data-url="{%url "report-search-emp"%}" data-target="report-search-emp"/> 
+                    <div id="report-search-emp"></div>
+                </div>
                 <div class="col-2 py-2 text-end d-none d-lg-block"> <span>{% trans "Cliente:" %}</span> </div>
-                <div class="col-4"> <input type="text" class="form-control form-control-dark w-100 py-2" 
-                    name="s_rep_cli" id="s_rep_cli" placeholder="Nombre cliente" value="{{request.session.s_rep_cli}}"/> </div>
+                <div class="col-4"> 
+                    <input type="hidden" class="form-control form-control-dark w-100 py-2" 
+                        name="s_rep_cli" id="s_rep_cli" placeholder="Nombre cliente" value="{{request.session.s_rep_cli}}"/> 
+
+                    <input class="form-control input autocomplete" id="rep_cli" name="rep_cli" placeholder="Nombre cliente"
+                        value="" data-url="{%url "report-search-cli"%}" data-target="report-search-cli"/> 
+                    <div id="report-search-cli"></div>
+                </div>
             </div>
         </div>
         <div class="col-1 p-0">

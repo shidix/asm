@@ -1,0 +1,35 @@
+{% load i18n gestion_tags %}
+
+{%comment%} PC VERSION {%endcomment%}
+
+<div class="d-none d-lg-block"> 
+    <div class="row main-th py-3 m-0">
+        <div class="col-2"> {% trans 'Usuario' %} </div>
+        <div class="col-2"> {% trans 'Código' %} </div>
+        <div class="col-4"> {% trans 'Asunto' %} </div>
+        <div class="col-2"> {% trans 'Fecha de inicio' %} </div>
+        {#<div class="col-2"> {% trans 'Fecha de fin' %} </div>#}
+        <div class="col-1"></div>
+        <div class="col-1 text-center"> {% trans 'Cerrada' %} </div>
+    </div>
+
+    {% for item in items %}
+        <div class="row list-item pt-2 pb-2 m-0 {%if item.email == ""%}alert alert-warning{%endif%}" id="row_{{item.id}}">
+            {#<div class="col-2">{{ item.owner.username|default:"" }} </div>#}
+            <div class="col-2">{{ item.employee|default:"" }} </div>
+            <div class="col-2">{{ item.code|default:"" }}</div>
+            <div class="col-4">{{ item.subject }}</div>
+            <div class="col-2 datetime">{{ item.creation_date|date:"Y-m-d H:i" }}</div>
+            {#<div class="col-2 datetime">{{ item.closed_date|date:"Y-m-d H:i" }}</div>#}
+            <div class="col-1 text-center">
+                {%if item.closed%}{% trans "Cerrada" %}{%else%}{% trans "Abierta" %}{%endif%}
+            </div>
+            <div class="col-1 text-right">
+                <a class="btn btn-xs ark" data-url="{%url "incidents-form"%}" data-target-modal="common-modal" 
+                    data-obj_id="{{item.id}}" title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
+            </div>
+            <div class="col-12 pt-1 pb-2"><strong>{% trans 'Descripción' %}:</strong> {{ item.description }}</div>
+        </div>
+    {% endfor %}
+</div>
+

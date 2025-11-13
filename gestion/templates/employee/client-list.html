@@ -1,0 +1,60 @@
+{% load i18n gestion_tags %}
+
+<div class="toolbar-jobs p-3">
+    <h2><i class="fas fa-user orange"></i> {{obj.name}} ({{obj.zone}})</h2>
+    <a class="btn btn-sm new" onclick="$('#step1').toggle()">
+        <i class="fas fa-plus"></i> <small>{%trans "Añadir Trabajo"%}</small></a>
+</div>
+
+<div id="step1" class="hide">
+    <input class="form-control input autocomplete" id="client" name="client" placeholder="{% trans "Nombre cliente" %}" 
+        value="" data-url="{% url "employee-search-client" %}" data-target="client-search-list" data-obj_id="{{obj.id}}" 
+        data-show="client-list"/>
+    <div id="client-search-list"></div>
+</div>
+<div id="step2" class="hide"> {% include "employee/timetable-form.html" %} </div>
+
+<div class="row mt-3">
+    {% for key, value in obj.clients.items %}
+        <div class="col-lg-4 col-12">
+            <div class="card mb-4 text-bg-info">
+                <div class="card-header">
+                    <div class="row client">
+                        <div class="col-1 col-1 text-center py-1"><i class="fas fa-map-marker orange"></i> </div>
+                        <div class="col-11 col-1 text-center py-1">{{key}}</div>
+                    </div>
+                    <div class="row py-2" style="border-bottom: 1px solid #ccc;">
+			            <div class="col-5 text-center"> Trabajado: <br/> <strong>
+                            {% get_client_worked_time obj value.0.client request.session.s_employee_idate request.session.s_employee_edate %}
+                            </strong> 
+                        </div>
+                        <div class="col-5 offset-2 text-center"> Debe trabajar:<br />
+                            <strong>{% get_client_work obj value.0.client %}</strong> 
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+			<div class="col-3"></div>
+                        <div class="col-2"><strong>{%trans "Inicio"%}</strong></div>
+                        <div class="col-2"><strong>{%trans "Fin"%}</strong></div>
+                    </div>
+         
+                    {% for item in value %}
+                        <div class="row dateline py-2">
+                            <div class="col-3"> {{item.day}} </div>
+                            <div class="col-2"> {{item.ini}} </div>
+                            <div class="col-2"> {{item.end}} </div>
+                            <div class="col-1 offset-4 text-center"> 
+                                <a class="" href="{%url "employee-form-timetable-remove" item.id%}" 
+                                    onclick="return confirm('Está seguro de que desea borrar este elemento?')"> 
+                                    <i class="fas fa-trash"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+

@@ -7,15 +7,17 @@
 {%comment%} PC VERSION {%endcomment%}
 <div class="d-none d-lg-block" tyle="border:1px solid blue">
     <div class="row menu m-0">
-        <div class="col-3 text-center nav-item {%current 'home'%}"><a class="nav-link" aria-current="page" href="{% url 'index' %}">
+        <div class="col-2 text-center nav-item {%current 'home'%}"><a class="nav-link" aria-current="page" href="{% url 'index' %}">
             <i class='fas fa-home'></i><span class="px-3">{%trans 'Inicio'%}</span></a></div>
         <div class="col-3 text-center nav-item {%current 'employees'%}">
             <a class="nav-link" aria-current="page" href="{% url 'employees' %}">
             <i class='fa fa-medkit'></i><span class="px-3">{%trans 'Empleados'%}</span></a></div>
         <div class="col-3 text-center nav-item {%current 'clients'%}"><a class="nav-link" aria-current="page" href="{%url 'clients'%}">
             <i class='fas fa-users'></i><span class="px-3">{%trans 'Clientes'%}</span></a></div>
-        <div class="col-3 text-center nav-item {%current 'report'%}"><a class="nav-link" aria-current="page" 
+        <div class="col-2 text-center nav-item {%current 'report'%}"><a class="nav-link" aria-current="page" 
             href="{%url 'report'%}"> <i class='fas fa-users'></i><span class="px-3">{%trans 'Informes'%}</span></a></div>
+        <div class="col-2 text-center nav-item {%current 'incidents'%}"><a class="nav-link" aria-current="page" 
+            href="{%url 'incidents'%}"> <i class='fas fa-cog'></i><span class="px-3">{%trans 'Incidencias'%}</span></a></div>
     </div>
 </div>
 
