@@ -127,8 +127,10 @@
     </div>
 </div>
 
+{%comment%}
 <div class="row modal-head m-0"><div class="col-11"><i class="fas fa-clock orange"></i>&nbsp; {% trans 'Horarios' %}</div></div>
 <div id="div-timetable"> {% include "clients/clients-form-timetable.html" %} </div>
+{%endcomment%}
 
 <div class="d-flex justify-content-end p-2">
     <button type="button" class="btn btn-primary ark mx-2" data-bs-dismiss="modal" data-url="{% url "clients-list" %}"
