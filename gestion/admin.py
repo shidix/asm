@@ -4,11 +4,24 @@ from .models import *
 
 class ClientAdmin(admin.ModelAdmin):
     list_per_page = 500
-admin.site.register(Client, ClientAdmin)
 
+class ClientTypeAdmin(admin.ModelAdmin):
+    list_display = ["name",]
+
+class EmployeeTypeAdmin(admin.ModelAdmin):
+    list_display = ["name",]
+
+class TimetableStatusAdmin(admin.ModelAdmin):
+    list_display = ["name", "code", "color"]
+
+
+admin.site.register(Client, ClientAdmin)
+admin.site.register(ClientType, ClientTypeAdmin)
 admin.site.register(Employee)
+admin.site.register(EmployeeType, EmployeeTypeAdmin)
 admin.site.register(Assistance)
 admin.site.register(Incident)
+admin.site.register(TimetableStatus, TimetableStatusAdmin)
 admin.site.register(Zone)
 
 #class FacilityTypeAdmin(admin.ModelAdmin):

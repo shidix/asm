@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block central_content %}
+    <div class="content mt-3">
+        <div class="d-none d-lg-block"> 
+            <div class="row toolbar-content py-3 m-0">
+                <div class="col-6"><h2 class="pathway b-right">{%trans 'Materiales'%} </h2> </div>
+            </div>
+        </div>
+
+        <div id="items-list" class="ml-list">{% include "items/items-list.html" %}</div>
+    </div>
+    {% include "common-modal.html" %}
+{% endblock central_content %}

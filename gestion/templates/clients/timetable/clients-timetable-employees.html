@@ -1,0 +1,25 @@
+{% load i18n static gestion_tags%}
+
+
+{% for item in obj.employees.all %}
+    <div class="employee" data-id="{{item.id}}" data-name="{{item.employee.name}}">
+        {#data-url="{% url "clients-timetable-assign" %}" data-id="{{item.id}}" data-name="{{item.employee.name}}">#}
+        <div class="employee-name">{{item.employee.name}}</div>
+	    <div class="row">
+            <div class="col-10 employee-role">{{item.employee.employee_type.name}}</div>
+        	<div class="col-2 pt-2">
+			<a class="text-end ark" data-url="{% url "clients-timetable-employees-remove" %}" data-target="employee-list" 
+		        data-obj_id="{{item.id}}" data-confirm="Esta seguro/a de que desea eliminar este usuario/a?">
+		        <i class="fas fa-trash danger"></i></a>
+		</div>
+	</div>
+
+    </div>
+    {%comment%}
+    <button class="btn btn-xs btn-danger ark" data-url="{% url "clients-timetable-employees-remove" %}" data-target="employee-list" 
+        data-obj_id="{{item.id}}" data-confirm="Esta seguro/a de que desea eliminar este usuario/a?">
+        <i class="fas fa-trash"></i></button>
+    {%endcomment%}
+{% endfor %}
+<button class="hide" id="btn-ini-drop"></button>
+<script>$("#btn-ini-drop").click();</script>

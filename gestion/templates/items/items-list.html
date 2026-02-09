@@ -1,0 +1,22 @@
+{% load i18n gestion_tags %}
+
+
+<div class="d-none d-lg-block"> 
+    <div class="row main-th py-3 m-0">
+        <div class="col-4"> {% trans 'Nombre' %} </div>
+        <div class="col-4"> {% trans 'Descripción' %} </div>
+        <div class="col-2"> {% trans 'Stock' %} </div>
+        <div class="col-2"></div>
+    </div>
+
+    {% for item in items %}
+        <div class="row list-item pt-2 pb-2 m-0" id="row_{{item.id}}">
+            <div class="col-4">{{ item.name|default:"" }} </div>
+            <div class="col-4">{{ item.description|default:"" }}</div>
+            <div class="col-2">{{ item.stock }}</div>
+            <div class="col-2">
+            </div>
+        </div>
+    {% endfor %}
+</div>
+

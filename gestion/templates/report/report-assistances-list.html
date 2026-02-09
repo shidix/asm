@@ -1,6 +1,5 @@
 {% load i18n gestion_tags %}
 
-{%comment%} PC VERSION {%endcomment%}
 
 <div class="d-none d-lg-block"> 
     <div class="row py-3 m-0">
@@ -35,6 +34,7 @@
 
 {%comment%} MOBILE VERSION {%endcomment%}
 
+{%comment%}
 <div class="d-lg-none"> 
     {% for item in items %}
         <div class="row list-item-cl pt-2 pb-2 m-0" id="row_{{item.id}}">
@@ -51,3 +51,4 @@
         </div>
     {% endfor %}
 </div>
+{%endcomment%}

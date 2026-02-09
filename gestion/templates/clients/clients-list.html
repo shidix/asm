@@ -9,14 +9,28 @@
             </div>
             <div class="col-10">
                 <div class="row">
+                    <div class="col-4"><strong><i class='fas fa-code orange'></i> 
+                        {% trans "NIF/NIE" %}<br /></strong> {{ item.code|default:"" }}</div>
+                    <div class="col-4"><strong><i class='fas fa-code orange'></i> 
+                        {% trans "Nº Expediente" %}<br /></strong> {{ item.exp|default:"" }}</div>
+                    <div class="col-4"><strong><i class='fas fa-code orange'></i> 
+                        {% trans "Fecha del contrato" %}<br /></strong> {{ item.exp|date:"d-m-Y" }}</div>
+                </div>
+                <br/>
+                <div class="row">
                     <div class="col-4"><strong><i class='fas fa-user orange'></i> 
                         {% trans "Nombre" %}<br /></strong> {{ item.name|default:"---" }}</div>
-                    <div class="col-4"><strong><i class='fas fa-envelope orange'></i> 
+                    <div class="col-4"><strong><i class='fas fa-user orange'></i> 
+                        {% trans "Tipo" %}<br /></strong> {{ item.client_type.name|default:"---" }}</div>
+                    <div class="col-4"><strong><i class='fas fa-user orange'></i> 
+                        {% trans "Cuantía" %}<br /></strong> {{ item.amount }} €</div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-8"><strong><i class='fas fa-envelope orange'></i> 
                         {% trans "Correo electrónico" %}<br /></strong> {{ item.email|default:"" }}</div>
-                    <div class="col-2"><strong><i class='fas fa-phone orange'></i> 
+                    <div class="col-4"><strong><i class='fas fa-phone orange'></i> 
                         {% trans "Teléfono" %}<br /></strong> {{ item.phone|default:"" }}</div>
-                    <div class="col-2"><strong><i class='fas fa-code orange'></i> 
-                        {% trans "Código" %}<br /></strong> {{ item.code|default:"" }}</div>
                 </div>
                 <br/>
                 <div class="row">
@@ -35,6 +49,8 @@
                             target="_blank"> <i class="fas fa-print"></i></a> 
                         <a class="btn btn-xs" href="{% url "clients-assistances" item.id %}" title="{% trans 'Asistencias' %}"> 
                             <i class="fa fa-medkit"></i></a> 
+                        <a class="btn btn-xs" href="{% url "clients-timetable" item.id %}" title="{% trans 'Horario' %}"> 
+                            <i class="fa fa-clock"></i></a> 
                         <a class="btn btn-xs ark" data-url="{% url "clients-form" %}" data-target-modal="common-modal" 
                             data-obj_id="{{item.id}}" title="{% trans 'Editar' %}"><i class="fas fa-edit"></i></a> 
                         <a class="btn btn-xs ark" data-url="{% url "clients-remove" %}" data-target="client-list" 

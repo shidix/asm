@@ -52,14 +52,25 @@ def get_client_worked_time(emp, client, ini_date, end_date):
     return "{} horas y {} minutos".format(hours, minutes)
 
 @register.simple_tag()
-def get_client_work(emp, client):
-    hours, mins = emp.client_work(client)
+def get_client_work(emp, client, ini_date, end_date):
+    hours, mins = emp.client_work(client, ini_date, end_date)
     return f"{hours} horas {mins} minutos"
 
 @register.simple_tag()
 def get_client_assigned_work(client):
     hours, mins = client.assigned_work()
     return f"{hours} horas {mins} minutos"
+
+@register.simple_tag()
+def get_emp_worked_time(client, ini_date, end_date, emp=""):
+    hours, minutes = client.emp_worked_time(emp, ini_date, end_date)
+    return "{} horas y {} minutos".format(hours, minutes)
+
+@register.simple_tag()
+def get_emp_work(client, ini_date, end_date, emp=""):
+    hours, mins = client.emp_work(emp, ini_date, end_date)
+    return f"{hours} horas {mins} minutos"
+
 
 
 @register.filter

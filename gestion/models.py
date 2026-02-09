@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.translation import gettext_lazy as _ 
+from django.utils import timezone
 
 import datetime
 
@@ -42,6 +43,17 @@ class Zone(models.Model):
 '''
     EMPLOYEE
 '''
+class EmployeeType(models.Model):
+    name = models.CharField(max_length=200, verbose_name = _('Nombre'), default="")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Tipo de empleado')
+        verbose_name_plural = _('Tipos de empleado')
+        ordering = ["name"]
+
 class Employee(models.Model):
     pin = models.CharField(max_length=20, verbose_name = _('PIN'), default="")
     dni = models.CharField(max_length=20, verbose_name = _('DNI'), default="")
@@ -50,6 +62,7 @@ class Employee(models.Model):
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     user = models.OneToOneField(User, verbose_name='Usuario', on_delete=models.CASCADE, null=True, blank=True, related_name='employee')
     zone = models.ForeignKey(Zone, verbose_name=_('Zona'), on_delete=models.SET_NULL, null=True, related_name="employees")
+    employee_type = models.ForeignKey(EmployeeType,verbose_name=_('Tipo'),on_delete=models.SET_NULL,null=True,related_name="employees")
 
     def __str__(self):
         return self.name
@@ -109,8 +122,10 @@ class Employee(models.Model):
             minutes = minutes % 60
         return hours, minutes
  
-    def client_work(self, client):
-        item_list = self.timetables.filter(client__id=client)
+    def client_work(self, client, ini_date, end_date):
+        idate = "{}".format(ini_date)
+        edate = "{}".format(end_date)
+        item_list = self.timetables.filter(client__id=client, date__range=(idate, edate), status__calc=True)
         mins = 0
         for item in item_list:
             try:
@@ -119,7 +134,7 @@ class Employee(models.Model):
                 mins += 0
         return hours_mins(mins)
  
-    def clients(self):
+    def clients_timetable(self):
         dic = {}
         for item in self.timetables.all():
             if item.client.name not in dic.keys():
@@ -140,6 +155,17 @@ class Employee(models.Model):
 '''
     CLIENTS
 '''
+class ClientType(models.Model):
+    name = models.CharField(max_length=200, verbose_name = _('Nombre'), default="")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Tipo cliente')
+        verbose_name_plural = _('Tipos de cliente')
+        ordering = ["name"]
+
 def upload_form_qr(instance, filename):
     ascii_filename = str(filename.encode('ascii', 'ignore'))
     instance.filename = ascii_filename
@@ -149,13 +175,17 @@ def upload_form_qr(instance, filename):
 class Client(models.Model):
     qr_access = models.BooleanField(default=False, verbose_name=_('Acceso QR'));
     inactive = models.BooleanField(default=False, verbose_name=_('Desactivado'));
+    amount = models.FloatField(default=0, verbose_name=_('Cuantia'));
+    exp = models.CharField(max_length=200, verbose_name = _('Número de expediente'), default="")
     code = models.CharField(max_length=200, verbose_name = _('Code'), default="")
     name = models.CharField(max_length=200, verbose_name = _('Razón Social'), default="")
     phone = models.CharField(max_length=50, verbose_name = _('Teléfono de contacto'), null=True, default='0000000000')
     email = models.EmailField(verbose_name = _('Email de contacto'), default="", null=True)
     address = models.TextField(verbose_name = _('Dirección'), null=True, default='')
     observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='')
+    date = models.DateField(default=timezone.now, null=True, verbose_name=_('Inicio'))
     qr = models.ImageField(upload_to=upload_form_qr, blank=True, verbose_name="QR", help_text="Select file to upload")
+    client_type = models.ForeignKey(ClientType, verbose_name=_('Tipo'), on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.name
@@ -170,16 +200,96 @@ class Client(models.Model):
                 mins += 0
         return hours_mins(mins)
  
+    def employees_id(self):
+        return [item.employee.id for item in self.employees.all()]
+
+    def emp_timetable(self):
+        dic = {}
+        for item in self.timetables.all():
+            if item.client.name not in dic.keys():
+                dic[item.client.name] = []
+            dic[item.client.name].append({"day":item.week_day, "ini":item.ini, "end":item.end, "id":item.id, "client":item.client.id})
+        return dic
+
+    def emp_worked_time(self, emp, ini_date, end_date):
+        idate = "{} 00:00".format(ini_date)
+        edate = "{} 23:59".format(end_date)
+        if emp != "":
+            item_list = self.assistances.filter(ini_date__gte=idate, end_date__lte=edate, employee__id=emp)
+        else:
+            item_list = self.assistances.filter(ini_date__gte=idate, end_date__lte=edate)
+        hours = 0
+        minutes = 0
+        for item in item_list:
+            if item.finish:
+                diff = item.end_date - item.ini_date
+                days, seconds = diff.days, diff.seconds
+                hours += seconds // 3600
+                minutes += (seconds % 3600) // 60
+                #hours = days * 24 + seconds // 3600
+                #seconds = seconds % 60
+        if minutes > 59:
+            hours += minutes // 60
+            minutes = minutes % 60
+        return hours, minutes
+ 
+    def emp_work(self, emp, ini_date, end_date):
+        idate = "{}".format(ini_date)
+        edate = "{}".format(end_date)
+        if emp != "":
+            item_list = self.timetables.filter(employee__id=emp, date__range=(idate, edate), status__calc=True)
+        else:
+            item_list = self.timetables.filter(date__range=(idate, edate), status__calc=True)
+        mins = 0
+        for item in item_list:
+            try:
+                mins += sub_hours(item.end, item.ini)
+            except Exception as e:
+                mins += 0
+        return hours_mins(mins)
+ 
+    def assigments(self):
+        import json
+
+        assigments = {}
+        for item in self.timetables.all():
+            ce = ClientEmployee.objects.filter(client=self, employee=item.employee).first()
+            dic = {
+                "timetable": item.id,
+                "id": ce.id,
+                "name": item.employee.name,
+                "start": item.ini.strftime("%H:%M:%S"),
+                "end": item.end.strftime("%H:%M:%S"),
+                "status": ""
+            }
+            try:
+                assigments[item.date.strftime("%Y-%m-%d")].append(dic)
+            except:
+                assigments[item.date.strftime("%Y-%m-%d")] = [dic]
+        return assigments
+
     class Meta:
         verbose_name = _('Cliente')
         verbose_name_plural = _('Clientes')
 
+class TimetableStatus(models.Model):
+    calc = models.BooleanField(default=True, verbose_name=_('Suma al cálculo'));
+    code = models.CharField(max_length=10, verbose_name=_('Código'))
+    name = models.CharField(max_length=255, verbose_name=_('Nombre'))
+    color = models.CharField(max_length=10, verbose_name=_('Color'), default="")
+
+    class Meta:
+        verbose_name = _('Estado horario')
+        verbose_name_plural = _('Estados horarios')
+
 class ClientTimetable(models.Model):
     day = models.IntegerField(verbose_name = _('Día'), default=0)
+    date = models.DateField(verbose_name = _('Día'), default=timezone.now)
     ini = models.TimeField(max_length=10, verbose_name = _('Hora de inicio'), default=datetime.time(8,0,0))
     end = models.TimeField(max_length=10, verbose_name = _('Hora de fin'), default=datetime.time(8,0,0))
     client = models.ForeignKey(Client,verbose_name=_('Cliente'),on_delete=models.SET_NULL,null=True,related_name="timetables")
     employee = models.ForeignKey(Employee,verbose_name=_('Empleado'),on_delete=models.SET_NULL,null=True,related_name="timetables")
+    status = models.ForeignKey(TimetableStatus,verbose_name=_('Estado'),on_delete=models.SET_NULL,null=True)
 
     #def __str__(self):
     #    return self.name
@@ -189,10 +299,22 @@ class ClientTimetable(models.Model):
         wd = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
         return wd[self.day]
 
+    def get_in_same_day(self):
+        return ClientTimetable.objects.filter(client=self.client, date=self.date)
+
     class Meta:
         verbose_name = _('Horario')
         verbose_name_plural = _('Horarios')
         ordering = ["day",]
+
+class ClientEmployee(models.Model):
+    client = models.ForeignKey(Client,verbose_name=_('Cliente'),on_delete=models.SET_NULL,null=True,related_name="employees")
+    employee = models.ForeignKey(Employee,verbose_name=_('Empleado'),on_delete=models.SET_NULL,null=True,related_name="clients")
+
+    class Meta:
+        verbose_name = _('Empleado')
+        verbose_name_plural = _('Empleados')
+        ordering = ["client__name",]
 
 
 '''
@@ -200,8 +322,8 @@ class ClientTimetable(models.Model):
 '''
 class Assistance(models.Model):
     finish = models.BooleanField(default=False, verbose_name=_('Terminada'));
-    ini_date = models.DateTimeField(default=datetime.datetime.now(), null=True, verbose_name=_('Inicio'))
-    end_date = models.DateTimeField(default=datetime.datetime.now(), null=True, verbose_name=_('Fin'))
+    ini_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Inicio'))
+    end_date = models.DateTimeField(default=timezone.now, null=True, verbose_name=_('Fin'))
     client = models.ForeignKey(Client, verbose_name=_('Client'), on_delete=models.SET_NULL, null=True, related_name="assistances")
     employee = models.ForeignKey(Employee,verbose_name=_('Empleado'),on_delete=models.SET_NULL,null=True,related_name="assistances")
 
@@ -231,7 +353,7 @@ class Incident(models.Model):
     code = models.CharField(max_length=10, verbose_name=_('Código'))
     subject = models.CharField(max_length=255, verbose_name=_('Asunto'))
     description = models.TextField(verbose_name=_('Descripción'), default='', blank=True, null=True)
-    creation_date = models.DateTimeField(default=datetime.datetime.now(), verbose_name=_('Creado el'))
+    creation_date = models.DateTimeField(default=timezone.now, verbose_name=_('Creado el'))
     closed_date = models.DateTimeField(default=datetime.datetime.max, blank=True, null=True, verbose_name=_('Cerrado el'))
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False, verbose_name=_('Creada por'))

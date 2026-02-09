@@ -11,7 +11,50 @@
 <div id="div-notification"></div>
 
 <div class="row justify-center">
-    <div class="col-6">
+    <div class="col-6"></div>
+    <div class="col-2 text-end"> <div class="greybox-sm p-1"> {% trans "Desactivar" %}<br/> </div> </div>
+    <div class="col-1">
+        <input type="checkbox" class="form-check-input autosave" id="inactive" name="inactive"  data-model-name="gestion.client" 
+            data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification" data-bool="True"
+            {%if obj.inactive%}checked{%endif%}/> <span id="inactive__msg"></span>
+    </div>
+    <div class="col-2 text-end"> <div class="greybox-sm p-1"> {% trans "Acceso QR" %}<br/> </div> </div>
+    <div class="col-1">
+        <input type="checkbox" class="form-check-input autosave" id="qr_access" name="qr_access"  data-model-name="gestion.client" 
+            data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification" data-bool="True"
+            {%if obj.qr_access%}checked{%endif%}/> <span id="qr_access__msg"></span>
+    </div>
+</div>
+
+<div class="row justify-center">
+    <div class="col-4">
+        <div class="greybox-sm p-1">
+            {% trans "NIF/NIE" %}
+            <input type="text" class="form-control autosave" id="code" name="code" value="{{obj.code|default:""}}" 
+                title="{{obj.name}}" data-model-name="gestion.client" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Código..." /> <span id="code__msg"></span>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="greybox-sm p-1">
+            {% trans "Número de expediente" %}
+            <input type="text" class="form-control autosave" id="exp" name="exp" value="{{obj.exp|default:""}}" 
+                title="{{obj.exp}}" data-model-name="gestion.client" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Código..." /> <span id="exp__msg"></span>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="greybox-sm p-1">
+            {% trans "Fecha de contrato" %}
+            <input type="date" class="form-control autosave" id="date" name="date" value="{{obj.date|date:"Y-m-d"}}" 
+                title="{{obj.date}}" data-model-name="gestion.client" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification" placeholder="Código..." /> <span id="exp__msg"></span>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-center">
+    <div class="col-4">
         <div class="greybox-sm p-1">
             {% trans "Nombre" %}
             <input type="text" class="form-control autosave" id="name" name="name" value="{{obj.name|default:""}}" 
@@ -19,31 +62,30 @@
                 data-target="div-notification" placeholder="Nombre..." /> <span id="name__msg"></span>
         </div>
     </div>
-    <div class="col-2">
+    <div class="col-4">
         <div class="greybox-sm p-1">
-            {% trans "Código" %}
-            <input type="text" class="form-control autosave" id="code" name="code" value="{{obj.code|default:""}}" 
-                title="{{obj.name}}" data-model-name="gestion.client" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
-                data-target="div-notification" placeholder="Código..." /> <span id="code__msg"></span>
+            {% trans "Tipo" %}
+            <select class="form-control autosave" id="client_type" name="client_type"  data-model-name="gestion.client" 
+                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification"> 
+                <span id="client_type__msg"></span>
+                <option value="">{% trans "-- Seleccione un tipo --" %}</option>
+                {% for item in type_list %}
+                    <option value="{{item.id}}"{%if item.id == obj.client_type.id%}selected{%endif%}>{{item.name}}</option>
+                {% endfor %}
+            </select>
         </div>
     </div>
-    <div class="col-2">
+    <div class="col-4">
         <div class="greybox-sm p-1">
-            {% trans "Desactivar" %}<br/>
-            <input type="checkbox" class="form-check-input autosave" id="inactive" name="inactive"  data-model-name="gestion.client" 
-                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification" data-bool="True"
-                {%if obj.inactive%}checked{%endif%}/> <span id="inactive__msg"></span>
+            {% trans "Cuantía" %}
+            <input type="number" class="form-control autosave" id="amount" name="amount" value="{{obj.amount}}" 
+                title="{{obj.amount}}" data-model-name="gestion.client" data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" 
+                data-target="div-notification"/> <span id="amount__msg"></span>
         </div>
     </div>
-    <div class="col-2">
-        <div class="greybox-sm p-1">
-            {% trans "Acceso QR" %}<br/>
-            <input type="checkbox" class="form-check-input autosave" id="qr_access" name="qr_access"  data-model-name="gestion.client" 
-                data-obj-id="{{obj.id}}" data-url="{%url "autosave_field"%}" data-target="div-notification" data-bool="True"
-                {%if obj.qr_access%}checked{%endif%}/> <span id="qr_access__msg"></span>
-        </div>
-    </div>
+</div>
 
+<div class="row justify-center">
     <div class="col-6">
         <div class="greybox-sm p-1">
             {% trans "Teléfono" %}
@@ -60,6 +102,9 @@
                 data-target="div-notification" placeholder="Correo electrónico..." /> <span id="email__msg"></span>
         </div>
     </div>
+</div>
+
+<div class="row justify-center">
     <div class="col-12">
         <div class="greybox-sm p-1">
             {% trans "Dirección" %}
@@ -68,6 +113,9 @@
                 data-target="div-notification" placeholder="Dirección..." /> <span id="address__msg"></span>
         </div>
     </div>
+</div>
+
+<div class="row justify-center">
     <div class="col-12">
         <div class="greybox-sm p-1">
             {% trans "Observaciones" %}

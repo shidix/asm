@@ -2,33 +2,29 @@
 {% load i18n static %}
 
 {% block central_content %}
-    <div class="row toolbar-search p-2 m-0">{% include "report/report-search.html" %} </div>
-    <div class="content mt-3">
-        {%comment%} PC VERSION {%endcomment%}
-        <div class="d-none d-lg-block"> 
-            <div class="row toolbar-content py-3 m-0">
-                <div class="col-6"><h2 class="pathway b-right">{%trans 'Asistencias'%} 
-                    {#<span id="items-counter" class="badge badge-secondary">{{items|length}}</span>#}</h2></div>
-                <div class="col-6 text-end"> <a class="btn btn-xs exp w-100" href="{% url "report-export" %}" 
-                    title="{% trans 'Exportar a CSV' %}" target="_blank"><i class="fas fa-file-csv"></i> {% trans "Exportar" %}</a>
-                </div>
-            </div>
-        </div>
 
-
-        {%comment%} MOBILE VERSION {%endcomment%}
-        <div class="d-lg-none"> 
-            <div class="toolbar-content p-3 m-0">
-                <h2 class="pathway b-right"> <i class="fas fa-users orange"></i>
-                    <span id="items-counter" class="badge badge-secondary">{{items|length}}</span></h2>
-                {%comment%}
-                <a class="btn btn-xs exp" href="{% url "employees-export" %}" title="{% trans 'Exportar a CSV' %}" target="_blank"> 
-                    <i class="fas fa-file-csv"></i> {% trans "Exportar" %}</a>
-                {%endcomment%}
-            </div>
-        </div>
-
-        <div id="emp-list" class="ml-list">{% include "report/report-list.html" %}</div>
-    </div>
-    {% include "common-modal.html" %}
+    <ul class="nav nav-tabs mx-2 pl-2 pr-2 pt-2">
+        <li class="nav-item">
+            <button class="nav-link ark report-tab active" data-url="{%url "report-clients"%}" data-target="report-main" 
+                onclick="$('.report-tab').removeClass('active');$(this).addClass('active')"> {% trans "Clientes" %}</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link ark report-tab" data-url="{%url "report-assistances"%}" data-target="report-main"
+                onclick="$('.report-tab').removeClass('active');$(this).addClass('active')"> {% trans "Asistencias" %}</button>
+        </li>
+    </ul>
+    <div id="report-main" class="mt-4"> {% include "report/report-clients.html" %} </div>
 {% endblock central_content %}
+
+
+{%comment%}
+{% block central_content %}
+    <div class="row toolbar-search p-2 m-0" tyle="background:#ccc;">
+        <div class="col-lg-2 offset-lg-4 col-6"> <button class="btn btn-default ark w-100 submenu" data-url="{%url "report-clients"%}" data-target="report-main">
+            {% trans "Clientes" %}</button></div>
+        <div class="col-lg-2 col-6"> <button class="btn btn-default ark w-100 submenu" data-url="{%url "report-assistances"%}" data-target="report-main">
+            {% trans "Asistencias" %}</button></div>
+    </div>
+    <div id="report-main" class="mt-4"> {% include "report/report-clients.html" %} </div>
+{% endblock central_content %}
+{%endcomment%}
