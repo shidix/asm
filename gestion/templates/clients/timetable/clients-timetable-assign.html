@@ -12,11 +12,13 @@
 	<div class="col-2 p-2">
         <label for="startTime">Hora de inicio:</label><br />
         <input type="time" id="startTime" value="{{timetable.ini|date:"H:i"|default:"09:00"}}" class="border p-2 w-100">
+        <input type="hidden" id="startPrev" value="{{timetable.ini|date:"H:i"|default:"09:00"}}" />
 	</div>
 
 	<div class="col-2 p-2">
 		<label for="endTime">Hora de fin:</label><br />
         <input type="time" id="endTime" value="{{timetable.end|date:"H:i"|default:"17:00"}}" class="border p-2 w-100">
+        <input type="hidden" id="endPrev" value="{{timetable.end|date:"H:i"|default:"17:00"}}" />
 	</div>
 
 	<div class="col-8 p-2">
@@ -29,27 +31,27 @@
 	</div>
 
     {% if new %}
-    	<div class="col-1 p-2"> <input type="radio" id="allDays" value="" class="border p-2 w-100"> </div>
+    	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="" class="border p-2 w-100"> </div>
 	    <div class="col-11 p-2"> <label for="allDays">{% trans "No repetir" %}</label><br /> </div>
     {% else %}
-    	<div class="col-1 p-2"> <input type="radio" id="allDays" value="" class="border p-2 w-100"> </div>
+    	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="" class="border p-2 w-100"> </div>
 	    <div class="col-5 p-2"> <label for="allDays">{% trans "No repetir" %}</label><br /> </div>
 
-    	<div class="col-1 p-2"> <input type="radio" id="allDays" value="remove" class="border p-2 w-100"> </div>
+    	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="remove" class="border p-2 w-100"> </div>
 	    <div class="col-5 p-2"> <label for="allDays">{% trans "Borrar de hoy en adelante" %}</label><br /> </div>
     {% endif  %}
 
-	<div class="col-1 p-2"> <input type="radio" id="allDays" value="week" class="border p-2 w-100"> </div>
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="week" class="border p-2 w-100"> </div>
     <div class="col-5 p-2"> <label for="allDays">{% trans "Repetir todo los" %} {{week_day}} {% trans "del mes" %}</label><br /> </div>
 
-	<div class="col-1 p-2"> <input type="radio" id="allDays" value="week_year" class="border p-2 w-100"> </div>
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="week_year" class="border p-2 w-100"> </div>
     <div class="col-5 p-2"> <label for="allDays">{% trans "Repetir todo los" %} {{week_day}} {% trans "del año" %}</label><br /> </div>
 
-	<div class="col-1 p-2"> <input type="radio" id="allDays" value="month" class="border p-2 w-100"> </div>
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="month" class="border p-2 w-100"> </div>
 	<div class="col-5 p-2"> 
         <label for="allDays">{% trans "Repetir todo los días del mes, excepto sábados y domingos" %}</label><br /> </div>
 
-	<div class="col-1 p-2"> <input type="radio" id="allDays" value="year" class="border p-2 w-100"> </div>
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="year" class="border p-2 w-100"> </div>
 	<div class="col-5 p-2"> 
         <label for="allDays">{% trans "Repetir todo los días del año, excepto sábados y domingos" %}</label><br /> </div>
 
@@ -57,7 +59,7 @@
 	    <button class="btn btn-secondary mx-2" id="cancelBtn" data-bs-dismiss="modal">Cancelar</button>
 
 	    <button class="btn btn-primary" id="confirmBtn" data-obj_id="{{obj.id}}" data-timetable="{{timetable.id}}" 
-		data-emp="{{obj.employee.name}}" data-date="{{date}}" data-bs-dismiss="modal"> Confirmar</button>
+		    data-emp="{{obj.employee.name}}" data-date="{{date}}" data-bs-dismiss="modal"> Confirmar</button>
 	    {%comment%}
 	    <button class="btn btn-primary" id="confirmBtn" data-url="{% url "clients-timetable-assign-save" %}" data-obj_id="{{obj.id}}"
 		data-timetable="{{timetable.id}}" data-emp="{{obj.employee.name}}" data-date="{{date}}" data-bs-dismiss="modal">

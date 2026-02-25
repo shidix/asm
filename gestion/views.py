@@ -218,7 +218,7 @@ def employees_import(request):
                 obj = Employee.objects.create(dni=l[2])
             print(l)
             obj.name = "{} {}".format(l[0], l[1])
-            obj.phone = l[4]
+            obj.phone = l[4] if len(l[4]) > 1 else l[5]
             obj.email = l[3]
             obj.dni = l[2]
             obj.save()
@@ -389,8 +389,16 @@ def clients_timetable_assign(request):
     context = {'obj': obj, 'date': date, 'week_day': WEEK_DAYS[d.weekday()], 'status_list': TimetableStatus.objects.all(), 'new': True}
     return render(request, "clients/timetable/clients-timetable-assign.html", context)
 
-def goc_client_timetable(date, ini, end, client, emp, st):
-    return ClientTimetable.objects.get_or_create(date=date, ini=ini, end=end, client=client, employee=emp, status=st)
+def goc_client_timetable(date, ini, end, client, emp, st, ini_prev, end_prev):
+    ct = ClientTimetable.objects.filter(date=date, ini=ini_prev, end=end_prev, client=client, employee=emp).first()
+    if ct == None:
+        return ClientTimetable.objects.create(date=date, ini=ini, end=end, client=client, employee=emp, status=st)
+    ct.ini = ini
+    ct.end = end
+    ct.status = st
+    ct.save()
+    return ct
+    #return ClientTimetable.objects.get_or_create(date=date, ini=ini, end=end, client=client, employee=emp, status=st)
 
 @group_required("Administradores",)
 def clients_timetable_assign_save(request):
@@ -399,6 +407,8 @@ def clients_timetable_assign_save(request):
     date = get_param(request.GET, "date")
     ini = get_param(request.GET, "ini")
     end = get_param(request.GET, "end")
+    ini_prev = get_param(request.GET, "ini_prev")
+    end_prev = get_param(request.GET, "end_prev")
     repeat = get_param(request.GET, "repeat")
     status = get_or_none(TimetableStatus, get_param(request.GET, "status"))
 
@@ -422,10 +432,10 @@ def clients_timetable_assign_save(request):
             while current <= edate:
                 if repeat == "week" or repeat == "week_year":
                     if current.weekday() == d.weekday():
-                        goc_client_timetable(current, ini, end, obj.client, obj.employee, status)
+                        goc_client_timetable(current, ini, end, obj.client, obj.employee, status, ini_prev, end_prev)
                 elif repeat == "month" or repeat == "year":
                     if current.weekday() not in [5, 6]:
-                        goc_client_timetable(current, ini, end, obj.client, obj.employee, status)
+                        goc_client_timetable(current, ini, end, obj.client, obj.employee, status, ini_prev, end_prev)
                 current += timedelta(days=1)
 
     return render(request, "clients/timetable/clients-timetable-reload.html", {})
@@ -619,15 +629,12 @@ def employee_search_client(request):
 
 @group_required("Administradores",)
 def employee_form_timetable(request):
-    print("--0--")
     obj = get_or_none(Employee, get_param(request.GET, "obj_id"))
     if obj != None:
         client = get_or_none(Client, get_param(request.GET, "client_id"))
         days = request.GET.getlist("day")
         ini = get_param(request.GET, "ini")
         end = get_param(request.GET, "end")
-        print("--1--")
-        print(days)
         for day in days:
             ClientTimetable.objects.create(client=client, employee=obj, day=day, ini=ini, end=end)
     return redirect(reverse('employee', kwargs={'obj_id': obj.id}))

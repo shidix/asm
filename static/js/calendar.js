@@ -97,6 +97,8 @@ $(document).ready(function() {
     $(document).on('click', '#confirmBtn', function(e) {
         let startTime = $('#startTime').val();
         let endTime = $('#endTime').val();
+        let startPrev = $('#startPrev').val();
+        let endPrev = $('#endPrev').val();
         let status = $('#status').val();
         let allDays = $('input[id="allDays"]:checked').val();
         //let statusClass = `status-${status}`;
@@ -107,7 +109,7 @@ $(document).ready(function() {
         let dateStr = $(this).data("date");
         let empName = $(this).data("name");
         
-        datas = {"timetable":timetable,"obj_id":obj_id,"date":dateStr,"ini":startTime,"end":endTime,"repeat":allDays,"status":status};
+        datas = {"timetable":timetable,"obj_id":obj_id,"date":dateStr,"ini":startTime,"end":endTime,"ini_prev":startPrev,"end_prev":endPrev,"repeat":allDays,"status":status};
         ajaxGet(URL_SAVE, datas, "day-cell-"+dateStr, "");
         
         currentDrop = null;
@@ -179,8 +181,10 @@ $(document).ready(function() {
 
     $(document).on('keyup', '#search-emp', function(e) {
         let val = $(this).val();
-        $(".btn-emp").each(function(){
-            if ($(this).html().toLowerCase().startsWith(val.toLowerCase()))
+        //$(".btn-emp").each(function(){
+        $(".divEmp").each(function(){
+            //if ($(this).html().toLowerCase().startsWith(val.toLowerCase()))
+            if ($(this).html().toLowerCase().includes(val.toLowerCase()))
                 $(this).show();
             else 
                 $(this).hide();
