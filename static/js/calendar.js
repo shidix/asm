@@ -85,6 +85,10 @@ $(document).ready(function() {
         });
     }
 
+    function normalizeText(str) {
+        return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
     // Hacer los empleados arrastrables
     $(".employee").draggable({
         revert: "invalid",
@@ -181,10 +185,12 @@ $(document).ready(function() {
 
     $(document).on('keyup', '#search-emp', function(e) {
         let val = $(this).val();
-        //$(".btn-emp").each(function(){
         $(".divEmp").each(function(){
-            //if ($(this).html().toLowerCase().startsWith(val.toLowerCase()))
-            if ($(this).html().toLowerCase().includes(val.toLowerCase()))
+            let text = normalizeText($(this).text());
+            let val_norm = normalizeText(val);
+
+            //if ($(this).html().toLowerCase().includes(val.toLowerCase()))
+            if (text.includes(val_norm))
                 $(this).show();
             else 
                 $(this).hide();

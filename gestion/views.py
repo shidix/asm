@@ -561,7 +561,7 @@ def report_export(request):
     from zoneinfo import ZoneInfo
     header = ['Cliente', 'Empleado', 'Fecha de inicio', 'Fecha de fin', 'Duración del servicio', 'Finalizada']
     values = []
-    items = get_report(request)
+    items = get_assistances_report(request)
     for item in items:
         ini_date = item.ini_date.astimezone(ZoneInfo("Atlantic/Canary"))
         idate = ini_date.strftime("%d-%m-%Y %H:%M")
