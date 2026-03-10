@@ -216,7 +216,7 @@ def employees_import(request):
             obj = Employee.objects.filter(dni=l[2]).first()
             if obj == None:
                 obj = Employee.objects.create(dni=l[2])
-            print(l)
+            #print(l)
             obj.name = "{} {}".format(l[0], l[1])
             obj.phone = l[4] if len(l[4]) > 1 else l[5]
             obj.email = l[3]
@@ -327,7 +327,7 @@ def clients_import(request):
         for line in lines:
             if i > 0:
                 l = line.split(";")
-                print(l)
+                #print(l)
                 obj = Client.objects.filter(code=l[1]).first()
                 if obj == None:
                     obj = Client.objects.create(code=l[1])
@@ -412,23 +412,26 @@ def clients_timetable_assign_save(request):
     repeat = get_param(request.GET, "repeat")
     status = get_or_none(TimetableStatus, get_param(request.GET, "status"))
 
-    if timetable != None:
-        timetable.ini = ini
-        timetable.end = end
-        timetable.status = status
-        timetable.save()
+    if repeat == "":
+        if timetable != None:
+            timetable.ini = ini
+            timetable.end = end
+            timetable.status = status
+            timetable.save()
+        else:
+            timetable = ClientTimetable.objects.create(date=date,ini=ini,end=end,client=obj.client,employee=obj.employee,status=status)
     else:
-        timetable = ClientTimetable.objects.create(date=date,ini=ini,end=end,client=obj.client,employee=obj.employee,status=status)
-
-    if repeat != "":
+    #if repeat != "":
         d = datetime.strptime(date, "%Y-%m-%d")
-        keys = ["year", "week_year", "remove"]
+        keys = ["year", "week_year", "remove", "one_day_month", "two_days_month"]
         edate = d + relativedelta(month=12, day=31) if repeat in keys else d + relativedelta(day=31)
         if repeat == "remove":
             ct = ClientTimetable.objects.filter(date__range=(d, edate), ini=ini, end=end, client=obj.client, employee=obj.employee)
             ct.delete()
         else:
             current = d
+            current_month = d.month
+            i = 0
             while current <= edate:
                 if repeat == "week" or repeat == "week_year":
                     if current.weekday() == d.weekday():
@@ -436,6 +439,15 @@ def clients_timetable_assign_save(request):
                 elif repeat == "month" or repeat == "year":
                     if current.weekday() not in [5, 6]:
                         goc_client_timetable(current, ini, end, obj.client, obj.employee, status, ini_prev, end_prev)
+                elif repeat == "one_day_month" or repeat == "two_days_month":
+                    if current.month != current_month:
+                        current_month = current.month
+                        i = 0
+                    if current.weekday() == d.weekday():
+                        i += 1
+                        if ((repeat == "one_day_month" and i == 1) or (repeat == "two_days_month" and (i == 1 or i == 3))):
+                            goc_client_timetable(current, ini, end, obj.client, obj.employee, status, ini_prev, end_prev)
+
                 current += timedelta(days=1)
 
     return render(request, "clients/timetable/clients-timetable-reload.html", {})
@@ -460,7 +472,7 @@ def clients_timetable_assign_edit(request):
 def clients_timetable_assign_remove(request):
     timetable = get_or_none(ClientTimetable, get_param(request.GET, "id"))
     timetable_list = timetable.get_in_same_day().exclude(id=timetable.id)
-    print(timetable_list)
+    #print(timetable_list)
     timetable.delete()
     return render(request, "clients/timetable/clients-timetable-box.html", {"timetable_list": timetable_list})
 

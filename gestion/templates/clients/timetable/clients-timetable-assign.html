@@ -42,18 +42,32 @@
     {% endif  %}
 
 	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="week" class="border p-2 w-100"> </div>
-    <div class="col-5 p-2"> <label for="allDays">{% trans "Repetir todo los" %} {{week_day}} {% trans "del mes" %}</label><br /> </div>
-
-	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="week_year" class="border p-2 w-100"> </div>
-    <div class="col-5 p-2"> <label for="allDays">{% trans "Repetir todo los" %} {{week_day}} {% trans "del año" %}</label><br /> </div>
+    <div class="col-5 p-2"> 
+        <label for="allDays">{% trans "Repetir todos los" %} <strong>{{week_day}} {% trans "del mes" %}</strong> </label><br/></div>
 
 	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="month" class="border p-2 w-100"> </div>
 	<div class="col-5 p-2"> 
-        <label for="allDays">{% trans "Repetir todo los días del mes, excepto sábados y domingos" %}</label><br /> </div>
+        <label for="allDays">{%trans "Repetir todo los días"%} <strong>del mes</strong>, {%trans "excepto sábados y domingos" %}
+        </label><br /> 
+    </div>
+
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="week_year" class="border p-2 w-100"> </div>
+    <div class="col-5 p-2">
+        <label for="allDays">{% trans "Repetir todos los" %} <strong>{{week_day}} {% trans "del año" %}</strong></label><br/></div>
 
 	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="year" class="border p-2 w-100"> </div>
 	<div class="col-5 p-2"> 
-        <label for="allDays">{% trans "Repetir todo los días del año, excepto sábados y domingos" %}</label><br /> </div>
+        <label for="allDays">{%trans "Repetir todo los días"%} <strong>del año</strong>, {%trans "excepto sábados y domingos" %}
+        </label><br/> 
+    </div>
+
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="one_day_month" class="border p-2 w-100"> </div>
+    <div class="col-11 p-2">
+        <label for="allDays">{% trans "Repetir" %} <strong>1 {{week_day}} {% trans "al mes todo el año" %}</strong></label><br/></div>
+
+	<div class="col-1 p-2"> <input type="radio" id="allDays" name="allDays" value="two_days_month" class="border p-2 w-100"> </div>
+    <div class="col-11 p-2">
+        <label for="allDays">{% trans "Repetir" %} <strong>2 {{week_day}} {% trans "al mes todo el año" %}</strong></label><br/></div>
 
 	<div class="col-12 text-end mt-3">
 	    <button class="btn btn-secondary mx-2" id="cancelBtn" data-bs-dismiss="modal">Cancelar</button>
