@@ -23,12 +23,24 @@
                 {% endfor %}
             </select>
         </div></div>
-        <div class="col-5"> <div class="greybox-sm p-1"> {% trans "Empleado" %}
+        <div class="col-5"> <div class="greybox-sm p-1"> 
+            {% trans "Empleado" %}: {{obj.employee.name}}
+            {%if obj%}<a class="btn btn-sm" onclick="$('#div-change-emp').toggle()">{%trans "Cambiar"%}</a>{%endif%}
+            <div id="div-change-emp" class="{%if obj%}hide{%endif%}">
+                <input type="hidden" class="form-control input" id="employee" name="employee" value="{{obj.employee.id}}"/> 
+                <input class="form-control input autocomplete" id="search_emp" name="search_emp" placeholder="Nombre del empleado"
+                    value="" data-url="{%url "assistances-search-emp"%}" data-target="assistant-search-emp"/> 
+                <div id="assistant-search-emp"></div>
+            </div>
+                {%comment%}
             <select class="form-control" id="employee" name="employee"> 
                 {% for emp in emp_list %}
                     <option value="{{emp.id}}" {%if emp == obj.employee%}selected{%endif%}>{{emp.name}}</option>
                 {% endfor %}
             </select>
+                {%endcomment%}
+
+
         </div></div>
 
         <div class="col-2"> <div class="greybox-sm p-1"> {% trans "Finalizada" %}
@@ -37,16 +49,20 @@
 
     <div class="row justify-center">
         <div class="col-3"> <div class="greybox-sm p-1"> {% trans "Fecha Entrada" %}
-            <input type="date" class="form-control" id="ini_date" name="ini_date" value="{{obj.ini_date|local_time|date:"Y-m-d"}}"/> </div></div>
+            <input type="date" class="form-control" id="ini_date" name="ini_date" value="{{obj.ini_date|local_time|date:"Y-m-d"}}"/> 
+        </div></div>
 
         <div class="col-3"> <div class="greybox-sm p-1"> {% trans "Hora Entrada" %}
-            <input type="time" class="form-control" id="ini_time" name="ini_time" value="{{obj.ini_date|local_time|date:"H:i"}}"/> </div> </div>
+            <input type="time" class="form-control" id="ini_time" name="ini_time" value="{{obj.ini_date|local_time|date:"H:i"}}"/> 
+        </div> </div>
 
         <div class="col-3"> <div class="greybox-sm p-1"> {% trans "Fecha Salida" %}
-            <input type="date" class="form-control" id="end_date" name="end_date" value="{{obj.end_date|local_time|date:"Y-m-d"}}"/> </div> </div>
+            <input type="date" class="form-control" id="end_date" name="end_date" value="{{obj.end_date|local_time|date:"Y-m-d"}}"/> 
+        </div> </div>
 
         <div class="col-3"> <div class="greybox-sm p-1"> {% trans "Hora Salida" %}
-            <input type="time" class="form-control" id="end_time" name="end_time" value="{{obj.end_date|local_time|date:"H:i"}}"/> </div> </div>
+            <input type="time" class="form-control" id="end_time" name="end_time" value="{{obj.end_date|local_time|date:"H:i"}}"/> 
+        </div> </div>
     </div>
 
     <div class="d-flex justify-content-end p-2">

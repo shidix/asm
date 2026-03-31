@@ -9,6 +9,7 @@ urlpatterns = [
     path('assistances/form-save', views.assistances_form_save, name='assistances-form-save'),
     path('assistances/remove', views.assistances_remove, name='assistances-remove'),
     path('assistances/client/<int:client_id>/', views.assistances_client, name='assistances-client'),
+    path('assistances/search-emp', views.assistances_search_emp, name='assistances-search-emp'),
 
     #---------------------- EMPLOYEES -----------------------
     path('employees', views.employees, name='employees'),
@@ -22,6 +23,7 @@ urlpatterns = [
     path('employees/export', views.employees_export, name='employees-export'),
     path('employees/import-csv', views.employees_import_csv, name='employees-import-csv'),
     path('employees/import', views.employees_import, name='employees-import'),
+    path('employees/copy-pin', views.employees_copy_pin, name='employees-copy-pin'),
 
     #---------------------- EMPLOYEE -----------------------
     path('employee/<int:obj_id>', views.employee, name='employee'),
@@ -35,6 +37,8 @@ urlpatterns = [
     path('clients/list', views.clients_list, name='clients-list'),
     path('clients/search', views.clients_search, name='clients-search'),
     path('clients/form', views.clients_form, name='clients-form'),
+    path('clients/form/save', views.clients_form_save, name='clients-form-save'),
+    path('clients/details/<int:obj_id>', views.clients_details, name='clients-details'),
     path('clients/form/timetable', views.clients_form_timetable, name='clients-form-timetable'),
     path('clients/remove', views.clients_remove, name='clients-remove'),
     path('clients/form/timetable/remove', views.clients_form_timetable_remove, name='clients-form-timetable-remove'),
@@ -43,6 +47,12 @@ urlpatterns = [
     path('clients/assistances/<int:obj_id>', views.clients_assistances, name='clients-assistances'),
     path('clients/import-csv/', views.clients_import_csv, name='clients-import-csv'),
     path('clients/import/', views.clients_import, name='clients-import'),
+    path('clients/doc-add/', views.clients_doc_add, name='clients-doc-add'),
+    path('clients/doc-remove/', views.clients_doc_remove, name='clients-doc-remove'),
+    path('clients/type-add/', views.clients_type_add, name='clients-type-add'),
+    path('clients/type-remove/', views.clients_type_remove, name='clients-type-remove'),
+    path('clients/inactive-add/', views.clients_inactive_add, name='clients-inactive-add'),
+    path('clients/inactive-remove/', views.clients_inactive_remove, name='clients-inactive-remove'),
 
     path('clients/timetable/<int:obj_id>', views.clients_timetable, name='clients-timetable'),
     path('clients/timetable/employees-add', views.clients_timetable_employees_add, name='clients-timetable-employees-add'),
@@ -65,6 +75,9 @@ urlpatterns = [
     path('report/export', views.report_export, name='report-export'),
     path('report/search-emp', views.report_search_emp, name='report-search-emp'),
     path('report/search-cli', views.report_search_cli, name='report-search-cli'),
+    path('report/employees', views.report_employees, name='report-employees'),
+    path('report/employees/list', views.report_employees_list, name='report-employees-list'),
+    path('report/employees/search', views.report_employees_search, name='report-employees-search'),
 
     #---------------------- INCIDENTS -----------------------
     path('incidents', views.incidents, name='incidents'),

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load i18n static gestion_tags%}
+
+{% block central_content %}
+	<div class="row">	
+	    <div class="col-12 pl-0">
+		<div class="toolbar-content py-3 px-0 ml-0">
+		    <h2 class="pathway">
+			{%trans 'Cliente'%}: <span class="badge badge-secondary"> {{obj.name}}</span></h2>
+		    <a class="btn btn-sm new" href="{%url 'clients'%}"><i class="fa fa-arrow-left"></i> {% trans 'Volver' %}</a>
+		</div>
+	    </div>
+	</div>
+
+	<div class="row m-0">	
+		<div class="col-lg-7 col-12">
+			<div class="card">
+				<div class="card-header"> <strong><i class="fa fa-id-badge"></i> Datos del cliente</strong> </div>
+				<div class="card-body"> {% include "clients/clients-details-main.html" %} </div>
+			</div>
+		</div>
+
+		<div class="col-lg-5 col-12">
+			<div class="card">
+				<div class="card-header"> <strong><i class="fas fa-toggle-on"></i> Activar / Desactivar</strong> </div>
+                <div class="card-body"><div id="div-inactive">{% include "clients/clients-details-inactive.html" %}</div></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row m-0">	
+		<div class="col-lg-7 col-12">
+			<div class="card my-2">
+				<div class="card-header"> <strong> <i class="fa fa-file"></i> Documentos</strong> </div>
+				<div class="card-body"> <div id="div-files"> {% include "clients/clients-details-docs.html" %} </div> </div>
+			</div>
+		</div>
+
+		<div class="col-lg-5 col-12">
+			<div class="card my-2">
+				<div class="card-header"> <strong><i class="fa fa-list-alt"></i> Tipos</strong> </div>
+				<div class="card-body"> <div id="div-types"> {% include "clients/clients-details-types.html" %} </div> </div>
+			</div>
+		</div>
+	</div>
+{% endblock central_content %}

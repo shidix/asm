@@ -147,6 +147,23 @@ class Employee(models.Model):
             return self.timetables.filter(client__qr_access=qr_access).order_by("client").distinct("client")
         return self.timetables.all().order_by("client").distinct("client")
 
+    def assigned_by_type(self, ini_date, end_date, status=None):
+        idate = "{}".format(ini_date)
+        edate = "{}".format(end_date)
+
+        if status is not None:
+            item_list = self.timetables.filter(status=status, date__range=(idate, edate))
+        else:
+            item_list = self.timetables.filter(date__range=(idate, edate))
+
+        mins = 0
+        for item in item_list:
+            try:
+                mins += sub_hours(item.end, item.ini)
+            except Exception as e:
+                mins += 0
+        return hours_mins(mins)
+ 
     class Meta:
         verbose_name = _('Empleado')
         verbose_name_plural = _('Empleados')
@@ -184,6 +201,8 @@ class Client(models.Model):
     address = models.TextField(verbose_name = _('Dirección'), null=True, default='')
     observations = models.TextField(verbose_name = _('Observaciones'), null=True, default='')
     date = models.DateField(default=timezone.now, null=True, verbose_name=_('Inicio'))
+    date_inactive = models.DateField(default=datetime.date(1900, 1, 1), null=True, verbose_name=_('Inicio'))
+    obs_inactive = models.TextField(verbose_name = _('Observaciones inactivo'), null=True, default='')
     qr = models.ImageField(upload_to=upload_form_qr, blank=True, verbose_name="QR", help_text="Select file to upload")
     client_type = models.ForeignKey(ClientType, verbose_name=_('Tipo'), on_delete=models.SET_NULL, null=True)
 
@@ -315,6 +334,38 @@ class ClientEmployee(models.Model):
         verbose_name = _('Empleado')
         verbose_name_plural = _('Empleados')
         ordering = ["client__name",]
+
+def upload_client_file(instance, filename):
+    ascii_filename = str(filename.encode('ascii', 'ignore'))
+    instance.filename = ascii_filename
+    folder = "clients/%s" % (instance.id)
+    return '/'.join(['%s' % (folder), datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ascii_filename])
+
+class ClientDoc(models.Model):
+    doc = models.FileField(upload_to=upload_client_file, blank=True, verbose_name="Fichero", help_text="Select file to upload")
+    client = models.ForeignKey(Client, verbose_name="Documento", on_delete=models.CASCADE, null=True, related_name="docs")
+
+    class Meta:
+        verbose_name = "Documento de client"
+        verbose_name_plural = "Documentos de cliente"
+
+class ClientTypeAmount(models.Model):
+    amount = models.FloatField(default=0, verbose_name=_('Cuantia'));
+    client_type = models.ForeignKey(ClientType, verbose_name=_('Tipo'), on_delete=models.SET_NULL, null=True)
+    client = models.ForeignKey(Client, verbose_name="Documento", on_delete=models.CASCADE, null=True, related_name="types")
+
+    class Meta:
+        verbose_name = "Tipo de cliente"
+        verbose_name_plural = "Tipos de clientes"
+
+class ClientInactive(models.Model):
+    date = models.DateField(default=datetime.date(1900, 1, 1), null=True, verbose_name=_('Inicio'))
+    obs = models.TextField(verbose_name = _('Observaciones inactivo'), null=True, default='')
+    client = models.ForeignKey(Client,verbose_name=_('Cliente'),on_delete=models.SET_NULL,null=True,related_name="inactives")
+
+    class Meta:
+        verbose_name = _('Inactivo')
+        verbose_name_plural = _('Inactivos')
 
 
 '''

@@ -162,6 +162,12 @@ span.status-completed, span.status-in-process, span.status-pending  {
 	background: white;
 }
 
+hr.orange {
+	color: #e35000;
+	margin: 0.5rem 0;
+}
+
+
 .gral-acts, .gral-acts:hover {
 	color: rgba(0,0,0,.54);
 	font-size: 15px;
@@ -292,18 +298,24 @@ a.btn.btn-primary.ark:hover, a.btn.btn-secondary.ark:hover {
     background-color: #4b7764 !important;
 }
 
+button.btn.btn-primary-add,
 label.btn-tools.tools-primary {
-    border: 1px solid #75b198;
-    color: #75b198;
+    border: 1px solid #f2902d;
+    color: #f2902d;
     padding: 0.5rem;
+    font-size: 0.85em;
 }
+button.btn.btn-primary-add:hover,
 label.btn-tools.tools-primary:hover {
-    border: 1px solid #4b7764;
-    color: #4b7764;
+    border: 1px solid #ae6317;
+    color: #ae6317;
 }
 
-i.fas.fa-upload { color: #75b198; }
-i.fas.fa-upload:hover { color: #4b7764; }
+i.fas.fa-upload, 
+i.fas.fa-plus { 
+	color: #f2902d; 
+}
+i.fas.fa-upload:hover { color: #ae6317; }
 
 i.fas.fa-route.white, i.fa.fa-truck, i.fa.fa-warehouse, i.fas.fa-times, i.far.fa-users, i.fas.fa-users.orange, i.fa.fa-medkit.orange, i.fa.fa-phone, i.fa.fa-envelope, i.fas.fa-keyboard.orange, i.fas.fa-clock.orange {
 	/*font-size: 1.3rem;*/
@@ -445,6 +457,15 @@ span.status-info {
 	background: #074f311c;
 }
 
+.row.type-item:hover,
+.row.doc-item:hover {
+	background: #fbeee0;
+}
+
+a.doc-name {
+    	color: #ae6317;
+	text-decoration: none;
+}
 
 /*** JOBS ***/
 

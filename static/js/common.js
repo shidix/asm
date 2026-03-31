@@ -228,7 +228,6 @@ function uploadMulti(obj, url, target, obj_id, up, token)
 function submitForm(frm, target)
 {
     setWait();
-    console.log("--1--");
     $.ajax({
         url: frm.attr('action'),
         type: frm.attr('method'),
